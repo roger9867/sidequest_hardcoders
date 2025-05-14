@@ -1,0 +1,2 @@
+/usr/bin/ar qc bin/libsidequest_lib.a CMakeFiles/sidequest_lib.dir/src/sidequest/model/quest.cpp.o CMakeFiles/sidequest_lib.dir/src/sidequest/model/user.cpp.o
+/usr/bin/ranlib bin/libsidequest_lib.a
