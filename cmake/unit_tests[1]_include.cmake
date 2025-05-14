@@ -1,5 +1,0 @@
-if(EXISTS "/home/roger/Studium/Semester 4/SoftwareEngineering/Übung 3 Architektur/sidequest/cmake/unit_tests[1]_tests.cmake")
-  include("/home/roger/Studium/Semester 4/SoftwareEngineering/Übung 3 Architektur/sidequest/cmake/unit_tests[1]_tests.cmake")
-else()
-  add_test(unit_tests_NOT_BUILT unit_tests_NOT_BUILT)
-endif()
