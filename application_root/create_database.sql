@@ -1,2 +1,10 @@
-create table user(email text primary key, display_name text, password text);
-insert into user(email, display_name) VALUES ('sidequest_root@hs-aalen.de', 'Sidequest Root User', '');
+CREATE TABLE user(
+	email TEXT PRIMARY KEY,
+	display_name TEXT NOT NULL,
+	password TEXT NOT NULL
+);
+CREATE TABLE quest (
+        id TEXT PRIMARY KEY,
+        caption TEXT NOT NULL,
+        parent TEXT REFERENCES quest(id)
+);
