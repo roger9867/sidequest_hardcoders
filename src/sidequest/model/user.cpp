@@ -1,23 +1,15 @@
 #include "user.h"
 
-namespace Sidequest 
-{
+namespace Sidequest  {
 
-	User::User()
-	{
-	}
+	User::User() {}
 
 	User::User( std::string email)
-		: email(email)
-	{
-	}
+		: email(email) {}
 
 	User::User(std::string email, std::string display_name, std::string password)
-		: email(email), display_name(display_name), password(password)
-	{
-	}
+		: email(email), display_name(display_name), password(password) {}
 
-	User::~User()
-	{
-	}
+	User::~User() {}
+
 }

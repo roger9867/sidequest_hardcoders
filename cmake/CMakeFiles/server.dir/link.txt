@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/server.dir/src/server/main.cpp.o -o bin/server   -L"/home/roger/Studium/Semester 4/SoftwareEngineering/Übung 3 Architektur/sidequest/dependencies"  -Wl,-rpath,"/home/roger/Studium/Semester 4/SoftwareEngineering/Übung 3 Architektur/sidequest/dependencies" bin/libsidequest_lib.a bin/libserver_lib.a -lsqlite3 

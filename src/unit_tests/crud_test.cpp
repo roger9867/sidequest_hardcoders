@@ -1,14 +1,17 @@
 #include <gtest/gtest.h>
 
+#include <filesystem>
+
 #include "storage/database.h"
+#include "storage/database_exceptions.h"
 #include "model/server_user.h"
 
-class CRUDTests : public ::testing::Test 
+class CRUDTests : public ::testing::Test
 {
 protected:
 	Sidequest::Server::Database* database;
 
-	CRUDTests() 
+	CRUDTests()
 	{
 	}
 
@@ -17,7 +20,8 @@ protected:
 
 	virtual void SetUp() {
 		database = new Sidequest::Server::Database(":memory:");
-		database->execute("create table user(email text primary key, display_name text, password text);");
+		//database->execute("create table user(email text primary key, display_name text, password text);");
+		//std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 	}
 
 	virtual void TearDown() {
@@ -27,12 +31,12 @@ protected:
 
 using namespace Sidequest::Server;
 
-TEST_F(CRUDTests, OPEN_DATABASE)
-{
+TEST_F(CRUDTests, OPEN_DATABASE) {
+	//std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 }
 
-TEST_F(CRUDTests, CRUD_USER_CREATE)
-{
+TEST_F(CRUDTests, CRUD_USER_CREATE) {
+	std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 	auto user = new ServerUser( database, "crud_user_create@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	delete(user);
@@ -40,12 +44,11 @@ TEST_F(CRUDTests, CRUD_USER_CREATE)
 	auto user2 = new ServerUser(database, "crud_user_create@hs-aalen.de");
 	user2->read_on_database();
 
-	EXPECT_EQ(user->display_name, "Temporary User");
+	EXPECT_EQ(user2->display_name, "Temporary User");
 	delete(user2);
 }
 
-TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE)
-{
+TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 	auto user = new ServerUser(database, "crud_user_create_double@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	delete(user);
@@ -61,8 +64,7 @@ TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE)
 	}
 }
 
-TEST_F(CRUDTests, CRUD_USER_READ)
-{
+TEST_F(CRUDTests, CRUD_USER_READ) {
 	auto user = new ServerUser(database, "crud_user_read@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	delete(user);
@@ -73,8 +75,7 @@ TEST_F(CRUDTests, CRUD_USER_READ)
 	EXPECT_EQ(user->display_name, "Temporary User");
 }
 
-TEST_F(CRUDTests, CRUD_USER_UPDATE)
-{
+TEST_F(CRUDTests, CRUD_USER_UPDATE) {
 	auto user = new ServerUser(database, "crud_user_update@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	user->display_name = "Changed Display Name";
@@ -88,8 +89,7 @@ TEST_F(CRUDTests, CRUD_USER_UPDATE)
 	delete(user2);
 }
 
-TEST_F(CRUDTests, CRUD_USER_DELETE)
-{
+TEST_F(CRUDTests, CRUD_USER_DELETE) {
 	auto user = new ServerUser(database, "crud_user_delete@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	delete(user);

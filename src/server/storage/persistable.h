@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PERSISTABLE_H
+#define PERSISTABLE_H
 
 #include <string>
 #include <vector>
@@ -8,17 +9,17 @@
 
 /* Base class of all persistent domain model objects on the server
 *  that implement CRUDS operations */
-namespace Sidequest
-{
-	namespace Server
-	{
+namespace Sidequest::Server {
+
 		class Database;
 
 		/* All persistent classes should derive from Persistable */
-		class Persistable
-		{
-		public:
-			Persistable( Database* database );
+		class Persistable {
+		 protected:
+			Database* database;
+
+		 public:
+			explicit Persistable(Database* database);
 			virtual ~Persistable();
 
 			virtual void create_on_database() = 0;
@@ -27,10 +28,7 @@ namespace Sidequest
 			virtual void delete_on_database() = 0;
 
 			virtual std::string class_id() = 0;
-
-		protected:
-			Database* database;
 		};
+};
 
-	};
-}
+#endif  //PERSISTABLE_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef USER_H
+#define USER_H
 
 #include <string>
 #include <vector>
@@ -21,3 +22,5 @@ namespace Sidequest
 		std::vector<Quest*> main_quests;
 	};
 }
+
+#endif  //USER_H

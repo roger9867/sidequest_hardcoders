@@ -1,2 +1,0 @@
-/usr/bin/ar qc bin/libserver_lib.a CMakeFiles/server_lib.dir/src/server/main.cpp.o CMakeFiles/server_lib.dir/src/server/model/server_user.cpp.o CMakeFiles/server_lib.dir/src/server/storage/column_cache.cpp.o CMakeFiles/server_lib.dir/src/server/storage/database.cpp.o CMakeFiles/server_lib.dir/src/server/storage/persistable.cpp.o CMakeFiles/server_lib.dir/src/server/storage/statement_cache.cpp.o
-/usr/bin/ranlib bin/libserver_lib.a
