@@ -65,7 +65,6 @@ TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 		delete(user);
 	}
 }
-/*
 
 TEST_F(CRUDTests, CRUD_USER_READ) {
 	auto user = new ServerUser(database, "crud_user_read@hs-aalen.de", "Temporary User", "");
@@ -111,4 +110,3 @@ TEST_F(CRUDTests, CRUD_USER_DELETE) {
 		delete(user);
 	}
 }
-*/

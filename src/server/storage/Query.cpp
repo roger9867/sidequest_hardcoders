@@ -30,6 +30,9 @@ namespace Sidequest::Server {
         return column_indices;
     }
 
+    sqlite3_stmt* Query::get_prepared_statement() {
+        return prepared_statement;
+    }
 
     /*
     int Database::execute(PreparedStatement* prepared_statement) {
@@ -70,13 +73,11 @@ namespace Sidequest::Server {
         const unsigned char* text = sqlite3_column_text(prepared_statement, index);
 
         if (text == nullptr) {
-
-            return "error";  // oder optional: throw std::runtime_error(...)
+            return "";  // oder optional: throw std::runtime_error(...)
         }
 
         return reinterpret_cast<const char*>(text);
     }
-
 
 
     int Query::execute() {
@@ -87,6 +88,7 @@ namespace Sidequest::Server {
         if (code == SQLITE_ROW && columnmap == nullptr) {
             columnmap = get_column_mapping(); // ensure map is ready
         }
+        if (code == SQLITE_ROW || code == SQLITE_DONE) is_executed = true;
         return code;
     }
 
@@ -130,10 +132,63 @@ namespace Sidequest::Server {
 
     Query::~Query() {
         if (prepared_statement) {
+            // completely release ressource
             sqlite3_finalize(prepared_statement);
         }
     }
 
 
+
+
+
+
+    bool Query::QueryIterator::operator!=(const Query::QueryIterator& other) const {
+        return is_end != other.is_end;
+    }
+    Query::QueryIterator::QueryIterator(Query* query, bool is_end)
+    : query(query), is_end(is_end) {
+        if (!is_end) {
+            if (query->is_executed) {
+                sqlite3_reset(query->prepared_statement);
+            }
+
+            int code = sqlite3_step(query->prepared_statement);
+            query->is_executed = true;
+
+            if (code != SQLITE_ROW) {
+                is_end = true;
+            } else if (!query->get_columnmap()) {
+                query->columnmap = query->get_column_mapping(); // Cache columns
+            }
+        }
+    }
+
+    Query::QueryIterator& Query::QueryIterator::operator++() {
+        if (!is_end) {
+            int code = sqlite3_step(query->prepared_statement);
+            if (code != SQLITE_ROW) {
+                is_end = true;
+            }
+        }
+        return *this;
+    }
+    std::unordered_map<std::string, std::string> Query::QueryIterator::operator*() const {
+        if (is_end) throw std::out_of_range("Dereferencing end iterator");
+
+        std::unordered_map<std::string, std::string> row;
+        auto* columnmap = query->get_columnmap();
+        for (const auto& [name, index] : *columnmap) {
+            const unsigned char* val = sqlite3_column_text(query->prepared_statement, index);
+            row[name] = val ? reinterpret_cast<const char*>(val) : "";
+        }
+        return row;
+    }
+
+    Query::QueryIterator Query::begin() {
+        return QueryIterator(this);
+    }
+    Query::QueryIterator Query::end() {
+        return QueryIterator(this, true);
+    }
 
 }
