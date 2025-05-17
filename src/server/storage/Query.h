@@ -5,33 +5,46 @@
 #ifndef QUERY_H
 #define QUERY_H
 #include <string>
+#include <unordered_map>
 
-/*
-#include "prepared_statement.h"
+#include "database_exceptions.h"
+#include "database.h"
+#include "sqlite3.h"
 
 namespace Sidequest::Server {
 
-    typedef struct sqlite3_stmt PreparedStatement;
+    typedef /*struct*/ sqlite3_stmt PreparedStatement;
+    typedef std::unordered_map<std::string, int> ColumnMap;
+
+    class Database;
 
     class Query {
 
     protected:
-        PreparedStatement* statement;
+        const std::string STATEMENT_SQL;
+        Database* database = nullptr;
+        PreparedStatement* prepared_statement = nullptr;
+        ColumnMap* columnmap = nullptr;
 
+        int get_column_index(std::string column_name);
+        ColumnMap* get_columnmap();
+        ColumnMap* get_column_mapping();
+        void prepare();
+        void reset_statement();
 
 
     public:
-        explicit Query(std::string statement_sql);
+        Query(Database* database, std::string statement_sql);
+        ~Query();
 
-        void execute();
+        int execute(/*PreparedStatement* prepared_statement*/);
+        int execute(std::string sql_statement);
 
         void bind(int parameter_index, std::string value);
         void bind(int parameter_index, unsigned int value);
-
-        //PreparedStatement* prepare(std::string statement_sql);
-
     };
 }
-*/
 
 #endif //QUERY_H
+
+

@@ -20,16 +20,34 @@ namespace Sidequest::Server {
 
 
 	void ServerUser::create_on_database() {
-		auto prepared_statement = database->prepare( "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);" );
-		database->bind(prepared_statement, 1, email);
-		database->bind(prepared_statement, 2, display_name);
-		database->bind(prepared_statement, 3, password);
-		if ( database->execute(prepared_statement) != SQLITE_DONE )
+
+		auto query = new Query(database, "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);");
+
+		query->bind(1, email);
+		query->bind(2, display_name);
+		query->bind(3, password);
+
+		if (query->execute() != SQLITE_DONE)
 			throw UnableToCreateObjectException(email);
-		database->reset_statement(prepared_statement);
+
+
+		//auto prepared_statement = database->prepare( "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);" );
+		//database->bind(prepared_statement, 1, email);
+		//database->bind(prepared_statement, 2, display_name);
+		//database->bind(prepared_statement, 3, password);
+		//
+		//if ( database->execute(prepared_statement) != SQLITE_DONE )
+		//	throw UnableToCreateObjectException(email);
+		//database->reset_statement(prepared_statement);
+		//
 	}
 
+
 	void ServerUser::read_on_database() {
+
+		database->create_query("SELECT * FROM user WHERE email = ?;");
+
+
 		auto prepared_statement = database->prepare("SELECT * FROM user WHERE email = ?;");
 		database->bind(prepared_statement, 1, email);
 		if ( database->execute(prepared_statement) != SQLITE_ROW )
@@ -37,6 +55,7 @@ namespace Sidequest::Server {
 		display_name = database->read_text_value(prepared_statement, "display_name");
 		password     = database->read_text_value(prepared_statement, "password");
 		database->reset_statement(prepared_statement);
+
 	}
 
 	void ServerUser::update_on_database() {
@@ -60,4 +79,5 @@ namespace Sidequest::Server {
 	std::string ServerUser::class_id() {
 		return "user";
 	}
+*/
 }

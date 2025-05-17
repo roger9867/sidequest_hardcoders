@@ -83,14 +83,14 @@ int main() {
         using namespace Sidequest::Server;
         auto database = new Database();
 
-        database->cleanInit();
+        database->clean_init();
 
         auto user = new ServerUser(database, "crud_user_create@hs-aalen.de", "Temporary User", "");
         user->create_on_database();
         delete(user);
 
-        auto user2 = new ServerUser(database, "crud_user_create@hs-aalen.de");
-        user2->read_on_database();
+        //auto user2 = new ServerUser(database, "crud_user_create@hs-aalen.de");
+        //user2->read_on_database();
 
 
         std::cout << user->display_name << std::endl;

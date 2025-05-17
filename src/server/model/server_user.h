@@ -19,11 +19,14 @@ namespace Sidequest::Server {
 		~ServerUser();
 
 		void create_on_database() override;
+
 		void read_on_database() override;
 		void update_on_database() override;
 		void delete_on_database() override;
 
+
 		std::string class_id() override;
+
 	};
 }
 
