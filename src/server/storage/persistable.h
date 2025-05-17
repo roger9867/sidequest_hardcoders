@@ -21,8 +21,8 @@ namespace Sidequest::Server {
 			virtual ~Persistable();
 
 			virtual void create_on_database() = 0;
-			/*
 			virtual void read_on_database() = 0;
+			/*
 			virtual void update_on_database() = 0;
 			virtual void delete_on_database() = 0;
 

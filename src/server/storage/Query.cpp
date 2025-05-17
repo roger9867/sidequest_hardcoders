@@ -4,6 +4,9 @@
 
 #include "Query.h"
 
+#include <iostream>
+#include <ostream>
+
 namespace Sidequest::Server {
 
     int Query::get_column_index(std::string column_name) {
@@ -40,10 +43,49 @@ namespace Sidequest::Server {
     }
     */
 
+
+    int Query::read_int_value(std::string column_name) {
+        int column_index = get_column_index(column_name);
+        int result = static_cast<int>(sqlite3_column_int64(prepared_statement, column_index) );
+        return result;
+    }
+    /*
+    std::string Query::read_text_value(std::string column_name) {
+        int column_index = get_column_index(column_name);
+        auto c_str = reinterpret_cast<const char*>( sqlite3_column_text(prepared_statement, column_index) );
+        std::string result( c_str );
+        return result;
+    }
+    */
+
+    std::string Query::read_text_value(std::string column_name) {
+        if (!columnmap || columnmap->find(column_name) == columnmap->end()) {
+            throw std::runtime_error("Column name not found: " + column_name);
+        }
+
+        //if (columnmap) std::cout << "map exists" << std::endl;
+
+        int index = (*columnmap)[column_name];
+        //if (prepared_statement) std::cout << "statement exists" << std::endl;
+        const unsigned char* text = sqlite3_column_text(prepared_statement, index);
+
+        if (text == nullptr) {
+
+            return "error";  // oder optional: throw std::runtime_error(...)
+        }
+
+        return reinterpret_cast<const char*>(text);
+    }
+
+
+
     int Query::execute() {
-    int code = -1;
-        if ((code = sqlite3_step(prepared_statement)) != SQLITE_DONE) {
+        int code = -1;
+        if (!((code = sqlite3_step(prepared_statement)) == SQLITE_DONE || code == SQLITE_ROW)) {
             reset_statement();
+        }
+        if (code == SQLITE_ROW && columnmap == nullptr) {
+            columnmap = get_column_mapping(); // ensure map is ready
         }
         return code;
     }
@@ -91,6 +133,7 @@ namespace Sidequest::Server {
             sqlite3_finalize(prepared_statement);
         }
     }
+
 
 
 }

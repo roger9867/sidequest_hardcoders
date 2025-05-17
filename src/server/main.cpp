@@ -89,8 +89,8 @@ int main() {
         user->create_on_database();
         delete(user);
 
-        //auto user2 = new ServerUser(database, "crud_user_create@hs-aalen.de");
-        //user2->read_on_database();
+        auto user2 = new ServerUser(database, "crud_user_create@hs-aalen.de");
+        user2->read_on_database();
 
 
         std::cout << user->display_name << std::endl;

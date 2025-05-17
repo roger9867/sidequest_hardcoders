@@ -27,8 +27,10 @@ namespace Sidequest::Server {
         ColumnMap* columnmap = nullptr;
 
         int get_column_index(std::string column_name);
+
         ColumnMap* get_columnmap();
         ColumnMap* get_column_mapping();
+
         void prepare();
         void reset_statement();
 
@@ -36,6 +38,9 @@ namespace Sidequest::Server {
     public:
         Query(Database* database, std::string statement_sql);
         ~Query();
+
+        int read_int_value(std::string column_name);
+        std::string read_text_value(std::string column_name);
 
         int execute(/*PreparedStatement* prepared_statement*/);
         int execute(std::string sql_statement);

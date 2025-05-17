@@ -34,7 +34,7 @@ using namespace Sidequest::Server;
 TEST_F(CRUDTests, OPEN_DATABASE) {
 	//std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 }
-/*
+
 
 TEST_F(CRUDTests, CRUD_USER_CREATE) {
 	std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
@@ -48,7 +48,7 @@ TEST_F(CRUDTests, CRUD_USER_CREATE) {
 	EXPECT_EQ(user2->display_name, "Temporary User");
 	delete(user2);
 }
-*/
+
 
 TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 	auto user = new ServerUser(database, "crud_user_create_double@hs-aalen.de", "Temporary User", "");

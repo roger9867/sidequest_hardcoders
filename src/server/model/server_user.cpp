@@ -21,7 +21,7 @@ namespace Sidequest::Server {
 
 	void ServerUser::create_on_database() {
 
-		auto query = new Query(database, "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);");
+		auto query = database->create_query("INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);");
 
 		query->bind(1, email);
 		query->bind(2, display_name);
@@ -30,34 +30,32 @@ namespace Sidequest::Server {
 		if (query->execute() != SQLITE_DONE)
 			throw UnableToCreateObjectException(email);
 
-
-		//auto prepared_statement = database->prepare( "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);" );
-		//database->bind(prepared_statement, 1, email);
-		//database->bind(prepared_statement, 2, display_name);
-		//database->bind(prepared_statement, 3, password);
-		//
-		//if ( database->execute(prepared_statement) != SQLITE_DONE )
-		//	throw UnableToCreateObjectException(email);
-		//database->reset_statement(prepared_statement);
-		//
+		// Reset statement??
 	}
 
 
 	void ServerUser::read_on_database() {
 
-		database->create_query("SELECT * FROM user WHERE email = ?;");
+		auto query = database->create_query("SELECT * FROM user WHERE email = ?;");
 
-
-		auto prepared_statement = database->prepare("SELECT * FROM user WHERE email = ?;");
+		query->bind(1, email);
+		if (query->execute() != SQLITE_ROW)
+			throw UnableToReadObjectException(email);
+		display_name = query->read_text_value("display_name");
+		password     = query->read_text_value("password");
+		/*
 		database->bind(prepared_statement, 1, email);
 		if ( database->execute(prepared_statement) != SQLITE_ROW )
 			throw UnableToReadObjectException(email);
 		display_name = database->read_text_value(prepared_statement, "display_name");
 		password     = database->read_text_value(prepared_statement, "password");
 		database->reset_statement(prepared_statement);
+		*/
 
+		// Reset??
 	}
 
+	/*
 	void ServerUser::update_on_database() {
 		auto prepared_statement = database->prepare("UPDATE user set display_name=?, password=? WHERE email=?;");
 		database->bind(prepared_statement, 1, display_name);
