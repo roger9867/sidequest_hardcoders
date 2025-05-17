@@ -45,12 +45,12 @@ namespace Sidequest::Server {
 		StatementCache* statement_cache;
 		ColumnCache* column_cache;
 
-		PreparedStatement* prepare(std::string statement_sql);
-		void bind(PreparedStatement* prepared_statement, int parameter_index, std::string value);
-		void bind(PreparedStatement* prepared_statement, int parameter_index, unsigned int value);
+		//PreparedStatement* prepare(std::string statement_sql);
+		//void bind(PreparedStatement* prepared_statement, int parameter_index, std::string value);
+		//void bind(PreparedStatement* prepared_statement, int parameter_index, unsigned int value);
 		int execute(PreparedStatement* prepared_statement);
 		int execute(std::string sql_statement);
-		void reset_statement(PreparedStatement* prepared_statement);
+		//void reset_statement(PreparedStatement* prepared_statement);
 		int read_int_value(PreparedStatement* prepared_statement, std::string column_name);
 		std::string read_text_value(PreparedStatement* prepared_statement, std::string column_name);
 	};

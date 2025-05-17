@@ -17,6 +17,8 @@ namespace Sidequest::Server {
 
 	ServerUser::~ServerUser() = default;
 
+
+
 	void ServerUser::create_on_database() {
 		auto prepared_statement = database->prepare( "INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);" );
 		database->bind(prepared_statement, 1, email);
