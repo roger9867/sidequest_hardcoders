@@ -5,6 +5,7 @@ CREATE TABLE user(
 );
 CREATE TABLE quest (
             id TEXT PRIMARY KEY,
+	    owner_id TEXT REFERENCES user(email) NOT NULL ,	
             caption TEXT NOT NULL,
             parent_id TEXT,
             FOREIGN KEY (parent_id) REFERENCES quest(id)

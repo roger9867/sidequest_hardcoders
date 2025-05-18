@@ -1,4 +1,6 @@
 #include "server_user.h"
+
+#include "server_quest.h"
 #include "../storage/database_exceptions.h"
 #include "storage/database.h"
 
@@ -56,6 +58,33 @@ namespace Sidequest::Server {
 
 	std::string ServerUser::class_id() {
 		return "user";
+	}
+
+
+	void ServerUser::get_mainquests() {
+		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ?;");
+		query.bind(1, email);
+		// Initialisierung in user garantiert eigentlich existenz
+		this->main_quests = std::vector<Quest*>();
+
+		int status = query.execute();
+		if (status != SQLITE_DONE && status != SQLITE_ROW)
+			throw UnableToReadObjectException("Loading main quests failed");
+
+		if (status == SQLITE_ROW) {
+			for (auto it = query.begin(); it != query.end(); ++it) {
+				auto row = *it;
+				this->main_quests.push_back(
+					new ServerQuest(
+						database,
+						row["id"],
+						this,
+						row["caption"],
+						nullptr,
+						nullptr));
+			}
+		}
+
 	}
 
 }

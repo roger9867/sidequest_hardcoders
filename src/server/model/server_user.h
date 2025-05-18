@@ -22,8 +22,9 @@ namespace Sidequest::Server {
 		void update_on_database() override;
 		void delete_on_database() override;
 
-
 		std::string class_id() override;
+
+		void get_mainquests();
 
 	};
 }

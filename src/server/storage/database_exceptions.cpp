@@ -22,4 +22,8 @@ namespace Sidequest::Server {
     UnableToDeleteObjectException::UnableToDeleteObjectException(const std::string& key)
         : std::runtime_error(key) {}
 
+    NoOwnerException::NoOwnerException(const std::string& key)
+        : std::runtime_error(key) {}
+
+
 }

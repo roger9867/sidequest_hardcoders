@@ -39,6 +39,11 @@ namespace Sidequest::Server {
          public:
             explicit UnableToDeleteObjectException(const std::string& key);
         };
+
+        class NoOwnerException  : public std::runtime_error {
+        public:
+            explicit NoOwnerException(const std::string& key);
+        };
 }
 
 #endif  //DATABASE_EXCEPTIONS_H
