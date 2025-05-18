@@ -7,6 +7,8 @@
 #include <iostream>
 #include <ostream>
 
+#include "database_exceptions.h"
+
 namespace Sidequest::Server {
 
     int Query::get_column_index(std::string column_name) {
@@ -34,42 +36,18 @@ namespace Sidequest::Server {
         return prepared_statement;
     }
 
-    /*
-    int Database::execute(PreparedStatement* prepared_statement) {
-        int code = sqlite3_step(prepared_statement);
-        return code;
-    }
-
-    int Database::execute(std::string sql_statement) {
-        int code = sqlite3_exec(handle, sql_statement.c_str(), nullptr, nullptr, nullptr);
-        return code;
-    }
-    */
-
 
     int Query::read_int_value(std::string column_name) {
         int column_index = get_column_index(column_name);
         int result = static_cast<int>(sqlite3_column_int64(prepared_statement, column_index) );
         return result;
     }
-    /*
-    std::string Query::read_text_value(std::string column_name) {
-        int column_index = get_column_index(column_name);
-        auto c_str = reinterpret_cast<const char*>( sqlite3_column_text(prepared_statement, column_index) );
-        std::string result( c_str );
-        return result;
-    }
-    */
 
     std::string Query::read_text_value(std::string column_name) {
         if (!columnmap || columnmap->find(column_name) == columnmap->end()) {
             throw std::runtime_error("Column name not found: " + column_name);
         }
-
-        //if (columnmap) std::cout << "map exists" << std::endl;
-
         int index = (*columnmap)[column_name];
-        //if (prepared_statement) std::cout << "statement exists" << std::endl;
         const unsigned char* text = sqlite3_column_text(prepared_statement, index);
 
         if (text == nullptr) {
@@ -86,7 +64,7 @@ namespace Sidequest::Server {
             reset_statement();
         }
         if (code == SQLITE_ROW && columnmap == nullptr) {
-            columnmap = get_column_mapping(); // ensure map is ready
+            columnmap = get_column_mapping(); // Existenz der Map garantieren
         }
         if (code == SQLITE_ROW || code == SQLITE_DONE) is_executed = true;
         return code;
@@ -137,11 +115,6 @@ namespace Sidequest::Server {
         }
     }
 
-
-
-
-
-
     bool Query::QueryIterator::operator!=(const Query::QueryIterator& other) const {
         return is_end != other.is_end;
     }
@@ -158,7 +131,7 @@ namespace Sidequest::Server {
             if (code != SQLITE_ROW) {
                 is_end = true;
             } else if (!query->get_columnmap()) {
-                query->columnmap = query->get_column_mapping(); // Cache columns
+                query->columnmap = query->get_column_mapping();
             }
         }
     }

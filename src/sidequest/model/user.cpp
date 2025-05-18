@@ -38,6 +38,4 @@ namespace Sidequest {
 	void User::set_email(std::string email) {
 		this->email = email;
 	}
-
-
 }

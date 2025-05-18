@@ -28,7 +28,6 @@ namespace Sidequest::Server {
 
 		void open(std::string filepath_of_database);
 		void close();
-		// read in sql file
 		static std::string get_sql_from_file(std::string filepath);
 
 		int init_schema();
@@ -39,35 +38,14 @@ namespace Sidequest::Server {
 		explicit Database(std::string path_to_database);
 		~Database();
 
-		// Clean initialize the Database
+		// clean initialize database
 		void clean_init();
 
-		// Database reset
+		// reset database
 		void recreate();
 
 		sqlite3* get_handle();
-
-		// Was ist Statement Cache??? Wohin???
-		StatementCache* statement_cache;
-		// Was ist Column Cache??? Wohin???
-		ColumnCache* column_cache;
-
-		//PreparedStatement* prepare(std::string statement_sql);
-		//void bind(PreparedStatement* prepared_statement, int parameter_index, std::string value);
-		//void bind(PreparedStatement* prepared_statement, int parameter_index, unsigned int value);
-
-		//int execute(Query* query);
-		// Query über DB erzeugen
 		Query* create_query(std::string sql_statement);
-
-		//int execute(PreparedStatement* prepared_statement);
-		//int execute(std::string sql_statement);
-		//void reset_statement(PreparedStatement* prepared_statement);
-
-
-		//????
-		//int read_int_value(PreparedStatement* prepared_statement, std::string column_name);
-		//std::string read_text_value(PreparedStatement* prepared_statement, std::string column_name);
 	};
 };
 

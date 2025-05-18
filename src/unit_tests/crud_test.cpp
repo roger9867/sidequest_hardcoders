@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include <filesystem>
 
 #include "model/server_quest.h"
@@ -21,8 +20,6 @@ protected:
 
 	virtual void SetUp() {
 		database = new Sidequest::Server::Database(":memory:");
-		//database->execute("create table user(email text primary key, display_name text, password text);");
-		//std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 	}
 
 	virtual void TearDown() {
@@ -33,12 +30,9 @@ protected:
 using namespace Sidequest::Server;
 
 TEST_F(CRUDTests, OPEN_DATABASE) {
-	//std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 }
 
-
 TEST_F(CRUDTests, CRUD_USER_CREATE) {
-	std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
 	auto user = new ServerUser( database, "crud_user_create@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
 	delete(user);
@@ -50,7 +44,6 @@ TEST_F(CRUDTests, CRUD_USER_CREATE) {
 	EXPECT_EQ(user2->get_display_name(), "Temporary User");
 	delete(user2);
 }
-
 
 TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 	auto user = new ServerUser(database, "crud_user_create_double@hs-aalen.de", "Temporary User", "");
@@ -115,8 +108,6 @@ TEST_F(CRUDTests, CRUD_USER_DELETE) {
 	}
 }
 
-
-
 TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
 
 	auto owner = new ServerUser(database, "test_user_mail");
@@ -140,7 +131,6 @@ TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
 
 
 TEST_F(CRUDTests, CRUD_QUEST_CREATE_DOUBLE) {
-	std::cout << "BEBUG4 : ";
 	auto owner1 = new ServerUser(database, "test_user1_mail");
 	auto quest1 = new ServerQuest(database, "id1", owner1, "caption1", nullptr, std::vector<Sidequest::Quest*>() );
 	quest1->create_on_database();

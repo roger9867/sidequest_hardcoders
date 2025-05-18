@@ -7,7 +7,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "database_exceptions.h"
 #include "database.h"
 #include "sqlite3.h"
 
@@ -66,9 +65,7 @@ namespace Sidequest::Server {
 
         int read_int_value(std::string column_name);
         std::string read_text_value(std::string column_name);
-
-        int execute(/*PreparedStatement* prepared_statement*/);
-        //int execute(std::string sql_statement);
+        int execute();
 
         void bind(int parameter_index, std::string value);
         void bind(int parameter_index, unsigned int value);

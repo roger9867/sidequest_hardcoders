@@ -12,7 +12,6 @@ namespace Sidequest {
 	Quest::~Quest() = default;
 
 
-
 	void Quest::add_subquest(Quest *quest) {
 		subquests.push_back(quest);
 	}

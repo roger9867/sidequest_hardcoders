@@ -5,11 +5,8 @@
 #include <vector>
 
 #include "user.h"
-#include "storage/Query.h"
 
-namespace Sidequest
-{
-
+namespace Sidequest {
 	class Quest  {
 	public:
 		typedef std::string Id;

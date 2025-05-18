@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-namespace Sidequest
-{
+namespace Sidequest {
+
 	class Quest;
 
 	class User {

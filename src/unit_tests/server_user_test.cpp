@@ -39,7 +39,7 @@ TEST_F(ServerUserTests, LOAD_MAINQUESTS) {
 		new ServerQuest(database, "id4", user, "caption4", nullptr, std::vector<Sidequest::Quest*>())
 	);
 
-	//user->create_on_database(); // is owner persisted without doing it explicitly?
+	//user->create_on_database(); // owner is persisted without doing it explicitly!
 	for (auto main_quest : user->get_main_quests()) {
 		auto server_quest = ServerQuest(database,
 			main_quest->get_id(),
@@ -81,8 +81,6 @@ TEST_F(ServerUserTests, LOAD_MAINQUESTS) {
 	EXPECT_EQ(user2->get_main_quests()[3]->get_caption(), "caption4");
 	EXPECT_EQ(user2->get_main_quests()[3]->get_parent(), nullptr);
 	EXPECT_EQ(user2->get_main_quests()[3]->get_subquests(), std::vector<Sidequest::Quest*>());
-
-
 }
 
 

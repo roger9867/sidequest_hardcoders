@@ -4,8 +4,6 @@
 
 #include "database.h"
 #include "database_exceptions.h"
-//#include "statement_cache.h"
-//#include "column_cache.h"
 
 namespace Sidequest::Server {
 
@@ -14,14 +12,9 @@ namespace Sidequest::Server {
 	}
 
 	void Database::clean_init() {
-		//open(PATH_TO_DATABASE);
 		close();
 		recreate();
 		init_schema();
-		//create_query(get_sql_from_file(PATH_TO_SCHEMA))->execute();
-		//execute(getSqlFromFile(PATH_TO_SCHEMA));
-		//statement_cache = new StatementCache(this);
-		//column_cache = new ColumnCache(this);
 	}
 
 	int Database::init_schema() {
@@ -41,7 +34,6 @@ namespace Sidequest::Server {
 		is_open = true;
 	}
 
-	// read in sql file
 	std::string Database::get_sql_from_file(std::string path_to_sql_file) {
 		std::ifstream file(path_to_sql_file);
 		if (!file.is_open()) {
@@ -56,25 +48,15 @@ namespace Sidequest::Server {
 	Database::Database() {
 		open(DEFAULT_PATH_TO_DATABASE);
 		init_schema();
-		//create_query(get_sql_from_file(PATH_TO_SCHEMA))->execute();
-		//execute(getSqlFromFile(PATH_TO_SCHEMA));
-		//statement_cache = new StatementCache(this);
-		//column_cache = new ColumnCache(this);
 	}
 
 	// Create database in custom location
 	Database::Database(std::string path_to_database) : PATH_TO_DATABASE(path_to_database) {
 		open(PATH_TO_DATABASE);
 		init_schema();
-		//create_query(get_sql_from_file(PATH_TO_SCHEMA))->execute();
-		//execute(getSqlFromFile(PATH_TO_SCHEMA));
-		//statement_cache = new StatementCache(this);
-		//column_cache = new ColumnCache(this);
 	}
 
 	Database::~Database() {
-		//delete(statement_cache);
-		//delete(column_cache);
 		if ( is_open )
 			close();
 	}
@@ -82,59 +64,6 @@ namespace Sidequest::Server {
 	sqlite3* Database::get_handle() {
 		return handle;
 	}
-
-	/*
-	PreparedStatement* Database::prepare(std::string statement_sql) {
-		PreparedStatement* prepared_statement = statement_cache->get_statement( statement_sql );
-		if (prepared_statement == nullptr) {
-			prepared_statement = statement_cache->add_statement(statement_sql);
-		}
-		return prepared_statement;
-	}
-	*/
-
-
-
-	/*
-	int Database::execute(PreparedStatement* prepared_statement) {
-		int code = sqlite3_step(prepared_statement);
-		return code;
-	}
-
-	int Database::execute(std::string sql_statement) {
-		int code = sqlite3_exec(handle, sql_statement.c_str(), nullptr, nullptr, nullptr);
-		return code;
-	}
-	*/
-
-
-
-	/*
-	void Database::reset_statement(PreparedStatement* prepared_statement) {
-		sqlite3_reset(prepared_statement);
-	}
-	*/
-
-	/*
-	int Database::read_int_value(PreparedStatement* statement, std::string column_name) {
-		int column_index = column_cache->get_column_index( statement, column_name);
-		int result = static_cast<int>( sqlite3_column_int64( statement, column_index) );
-		return result;
-	}
-
-	std::string Database::read_text_value(PreparedStatement* statement, std::string column_name) {
-		int column_index = column_cache->get_column_index(statement, column_name);
-		auto c_str = reinterpret_cast<const char*>( sqlite3_column_text(statement, column_index) );
-		std::string result( c_str );
-		return result;
-	}
-	*/
-
-
-
-
-
-
 
 	void Database::open(std::string path_of_database) {
 		int return_code = sqlite3_open( path_of_database.c_str(), &handle );
