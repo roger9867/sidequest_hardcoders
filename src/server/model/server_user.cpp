@@ -64,7 +64,7 @@ namespace Sidequest::Server {
 	void ServerUser::load_main_quests() {
 		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ?;");
 		query.bind(1, email);
-		// Initialisierung in user garantiert eigentlich existenz
+
 		this->main_quests = std::vector<Quest*>();
 
 		int status = query.execute();

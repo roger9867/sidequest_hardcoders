@@ -33,15 +33,12 @@ namespace Sidequest::Server {
 
 
     void ServerQuest::create_on_database() {
-
-        // was wenn Owner nicht gespeichert?
-
+        // save owner if not in database only
         try {
             auto s_user = new ServerUser(database, owner->get_email(), owner->get_display_name(), owner->get_password());
             s_user->create_on_database();
             owner = s_user;
         } catch (UnableToCreateObjectException ignored) {}
-
 
         Query query = Query(database,"INSERT INTO quest (id, owner_id, caption, parent_id) VALUES (?, ?, ?, ?);");
         query.bind(1, id);
@@ -70,12 +67,10 @@ namespace Sidequest::Server {
 
         if (query.read_text_value("parent_id") != "" && query.read_text_value("parent_id") != "null") {
             parent = new ServerQuest(database, query.read_text_value("parent_id"));
-            std::cout << "has ----- parent" << std::endl;
-            //parent->id = query.read_text_value("parent_id");
         }
 
         // Get one level of subquests
-        this->get_subquests();
+        this->load_sub_quests();
     }
 
     void ServerQuest::update_on_database() {
@@ -101,28 +96,18 @@ namespace Sidequest::Server {
             throw UnableToDeleteObjectException("id");
     }
 
-    /*
-    Quest* ServerQuest::get_parent(ServerQuest* quest) {
-        auto query = Query(database, "SELECT * FROM quest WHERE parent_id = ?;");
-    }
-    */
 
-    void ServerQuest::get_subquests() {
+    void ServerQuest::load_sub_quests() {
         auto query = Query(database, "SELECT * FROM quest WHERE parent_id = ?;");
         query.bind(1, this->id);
         auto sub_quests = std::vector<Quest*>();
-        //std::cout << "$$" << std::endl;
 
-        // Execute the query and check for errors
         int status = query.execute();
         if (status != SQLITE_ROW && status != SQLITE_DONE) {
             std::cout << "Error executing query" << std::endl;
             throw UnableToReadObjectException("id");
         }
 
-        //std::cout << "$$---" << std::endl;
-        // Iterate through query results
-        // Only start iteration if there are results
         if (status == SQLITE_ROW) {
             for (auto it = query.begin(); it != query.end(); ++it) {
                 auto row = *it;
@@ -147,7 +132,7 @@ namespace Sidequest::Server {
     }
 
 
-    /* Main Quests haben keinen parent
+    /* main quests dont have a parent
      *
     void ServerQuest::get_parent() {
 
