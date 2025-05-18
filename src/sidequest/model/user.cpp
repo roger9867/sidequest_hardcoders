@@ -1,6 +1,10 @@
 #include "user.h"
 
-namespace Sidequest  {
+namespace Sidequest {
+
+	void User::add_main_quests(Quest* quest) {
+		main_quests.push_back(quest);
+	}
 
 	User::User() {}
 
@@ -22,6 +26,9 @@ namespace Sidequest  {
 	std::string User::get_password() const {
 		return password;
 	}
+	std::vector<Quest*> User::get_main_quests() const {
+		return main_quests;
+	}
 	void User::set_password(std::string password) {
 		this->password = password;
 	}
@@ -31,5 +38,6 @@ namespace Sidequest  {
 	void User::set_email(std::string email) {
 		this->email = email;
 	}
+
 
 }

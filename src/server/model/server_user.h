@@ -24,7 +24,7 @@ namespace Sidequest::Server {
 
 		std::string class_id() override;
 
-		void get_mainquests();
+		void load_main_quests();
 
 	};
 }

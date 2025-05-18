@@ -16,7 +16,7 @@ namespace Sidequest::Server {
 
         explicit ServerQuest(Database* database);
         ServerQuest(Database* database, Id id);
-        ServerQuest(Database* database, Id id, User* owner, std::string caption, Quest* parent, std::vector<Quest*>* subquests);
+        ServerQuest(Database* database, Id id, User* owner, std::string caption, Quest* parent, std::vector<Quest*> subquests);
         ~ServerQuest();
 
         void get_subquests();

@@ -6,7 +6,7 @@ namespace Sidequest {
 	Quest::Quest(Id id)
 		: id(id) {}
 
-	Quest::Quest(Id id, User* owner, std::string caption, Quest *parent, std::vector<Quest *> *subquests)
+	Quest::Quest(Id id, User* owner, std::string caption, Quest *parent, std::vector<Quest *> subquests)
 		: id(id), owner(owner), caption(caption), parent(parent) {}
 
 	Quest::~Quest() = default;
@@ -27,7 +27,7 @@ namespace Sidequest {
 	Quest* Quest::get_parent() const {
 		return parent;
 	}
-	std::vector<Quest*> Quest::get_subquests() const {
+	std::vector<Quest*>  Quest::get_subquests() const {
 		return subquests;
 	}
 	User* Quest::get_owner() const {

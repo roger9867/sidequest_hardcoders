@@ -16,7 +16,7 @@ namespace Sidequest
 
 		Quest();
 		Quest(Id id);
-		Quest(Id id, User* owner, std::string caption, Quest* parent, std::vector<Quest*>* subquests);
+		Quest(Id id, User* owner, std::string caption, Quest* parent, std::vector<Quest*> subquests);
 		~Quest();
 
 		void add_subquest(Quest *quest);
@@ -24,7 +24,7 @@ namespace Sidequest
 		Id get_id() const;
 		std::string get_caption() const;
 		Quest* get_parent() const;
-		std::vector<Quest*> get_subquests() const;
+		std::vector<Quest*>  get_subquests() const;
 		User* get_owner() const;
 
 

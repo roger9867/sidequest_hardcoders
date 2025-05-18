@@ -22,7 +22,7 @@ namespace Sidequest::Server {
         , Quest(id) {
     }
 
-    ServerQuest::ServerQuest(Database* database, Id id, User* owner, std::string caption, Quest *parent, std::vector<Quest *> *subquests)
+    ServerQuest::ServerQuest(Database* database, Id id, User* owner, std::string caption, Quest *parent, std::vector<Quest *> subquests)
         : Persistable(database)
         , Quest(id, owner, caption, parent, subquests) {
     }
@@ -134,7 +134,7 @@ namespace Sidequest::Server {
                         owner,
                         row["caption"],
                         parent,
-                        nullptr)
+                        std::vector<Quest*>())
                 );
                 std::cout
                 << row["id"]

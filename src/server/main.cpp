@@ -111,8 +111,8 @@ int main() {
     auto owner1 = new ServerUser(database, "owner_1@email.com");
     auto owner2 = new ServerUser(database, "owner_2@email.com");
 
-    auto quest1 = new ServerQuest(database, "id1", owner1, "This is a quest.", nullptr, nullptr );
-    auto questP = new ServerQuest(database, "idP", owner2, "This quest is the parent of a quest.", nullptr, nullptr );
+    auto quest1 = new ServerQuest(database, "id1", owner1, "This is a quest.", nullptr, std::vector<Sidequest::Quest*>() );
+    auto questP = new ServerQuest(database, "idP", owner2, "This quest is the parent of a quest.", nullptr, std::vector<Sidequest::Quest*>() );
 
     quest1->set_parent(questP);
     questP->add_subquest(quest1);
