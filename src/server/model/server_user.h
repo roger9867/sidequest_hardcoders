@@ -11,7 +11,6 @@ namespace Sidequest::Server {
 
 	class ServerUser : public Sidequest::User, public Persistable {
 	 public:
-		typedef unsigned long Id;
 
 		explicit ServerUser(Database* database);
 		ServerUser(Database* database, std::string email);
@@ -19,7 +18,6 @@ namespace Sidequest::Server {
 		~ServerUser();
 
 		void create_on_database() override;
-
 		void read_on_database() override;
 		void update_on_database() override;
 		void delete_on_database() override;

@@ -2,6 +2,7 @@
 
 #include <filesystem>
 
+#include "model/server_quest.h"
 #include "storage/database.h"
 #include "storage/database_exceptions.h"
 #include "model/server_user.h"
@@ -110,3 +111,87 @@ TEST_F(CRUDTests, CRUD_USER_DELETE) {
 		delete(user);
 	}
 }
+
+
+
+TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
+	std::cout << "Working dir: " << std::filesystem::current_path() << std::endl;
+	auto quest1 = new ServerQuest(database, "id1", "caption1", nullptr, nullptr );
+
+	quest1->create_on_database();
+	delete(quest1);
+
+	auto quest2 = new ServerQuest(database, "id1");
+	quest2->read_on_database();
+
+	EXPECT_EQ(quest2->caption, "caption1");
+	delete(quest2);
+}
+
+
+
+TEST_F(CRUDTests, CRUD_QUEST_CREATE_DOUBLE) {
+	auto quest1 = new ServerQuest(database, "id1", "caption1", nullptr, nullptr );
+	quest1->create_on_database();
+	delete(quest1);
+
+	try {
+		auto quest1 = new ServerQuest(database, "id1", "caption2", nullptr, nullptr );
+		quest1->create_on_database();
+		FAIL();
+	}
+	catch (const UnableToCreateObjectException& expected)
+	{
+		delete(quest1);
+	}
+}
+
+TEST_F(CRUDTests, CRUD_QUEST_READ) {
+	auto quest = new ServerQuest(database, "id1", "caption3", nullptr, nullptr );
+	quest->create_on_database();
+	delete(quest);
+
+	quest = new ServerQuest(database, "id1");
+	quest->read_on_database();
+
+	EXPECT_EQ(quest->caption, "caption3");
+}
+
+
+TEST_F(CRUDTests, CRUD_QUEST_UPDATE) {
+	auto quest = new ServerQuest(database, "id1", "caption3", nullptr, nullptr );
+	quest->create_on_database();
+	quest->caption = "new caption";
+	quest->update_on_database();
+	delete(quest);
+
+	quest = new ServerQuest(database, "id1");
+	quest->read_on_database();
+
+	EXPECT_EQ(quest->caption, "new caption");
+	delete(quest);
+}
+
+/*
+
+TEST_F(CRUDTests, CRUD_USER_DELETE) {
+	auto user = new ServerUser(database, "crud_user_delete@hs-aalen.de", "Temporary User", "");
+	user->create_on_database();
+	delete(user);
+
+	auto user2 = new ServerUser(database, "crud_user_delete@hs-aalen.de");
+	user2->delete_on_database();
+	delete(user2);
+
+	try {
+		auto user3 = new ServerUser(database, "crud_user_delete@hs-aalen.de");
+		user3->read_on_database();
+		FAIL();
+	}
+	catch (const UnableToReadObjectException& expected)
+	{
+		delete(user);
+	}
+}
+
+*/

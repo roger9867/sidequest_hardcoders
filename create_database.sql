@@ -3,4 +3,10 @@ CREATE TABLE user(
 	display_name TEXT NOT NULL,
 	password TEXT NOT NULL
 );
+CREATE TABLE quest (
+            id TEXT PRIMARY KEY,
+            caption TEXT NOT NULL,
+            parent_id TEXT,
+            FOREIGN KEY (parent_id) REFERENCES quest(id)
+);
 

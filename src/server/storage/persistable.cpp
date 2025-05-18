@@ -5,7 +5,7 @@
 
 namespace Sidequest::Server {
 
-	Persistable::Persistable( Database* database ) {
+	Persistable::Persistable(Database* database) {
 		this->database = database;
 	}
 

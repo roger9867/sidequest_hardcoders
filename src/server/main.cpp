@@ -7,6 +7,7 @@
 #include "storage/database.h"
 #include "model/server_user.h"
 #include "model/quest.h"
+#include "model/server_quest.h"
 
 bool clearAllTableData(sqlite3* db) {
     const char* get_tables_sql =
@@ -86,6 +87,7 @@ int main() {
 
     database->clean_init();
 
+    /*
     auto user1 = new ServerUser(database, "crud_user1_create@hs-aalen.de", "Temporary User1", "1");
     user1->create_on_database();
     auto user2 = new ServerUser(database, "crud_user2_create@hs-aalen.de", "Temporary User2", "2");
@@ -103,6 +105,52 @@ int main() {
         auto row = *it;
         std::cout << row["email"] << ", " << row["display_name"] << ", " << row["password"] << std::endl;
     }
+    */
+
+
+    auto quest1 = new ServerQuest(database, "id1", "caption1", nullptr, nullptr );
+    auto questP = new ServerQuest(database, "idP", "captionP", nullptr, nullptr );
+
+    quest1->set_parent(questP);
+    questP->add_subquest(quest1);
+
+
+    quest1->create_on_database();
+    questP->create_on_database();
+    delete quest1;
+    delete questP;
+
+    auto quest2 = new ServerQuest(database, "id1");
+    quest2->read_on_database();
+
+    std::cout << quest2->get_id() << ", " << quest2->get_caption() << ", " << quest2->get_parent()->get_id()  << std::endl;
+
+    std::cout << "$$" << std::endl;
+    ServerQuest* quest2P = new ServerQuest(database, quest2->get_parent()->get_id());
+    std::cout << "$$" << std::endl;
+    std::cout << quest2P->get_id() << ", " << quest2P->get_caption() << ", " << quest2P->get_parent()  << std::endl;
+
+    quest2P->read_on_database();
+    std::cout << quest2P->get_id() << ", " << quest2P->get_caption() << ", " << quest2P->get_parent()  << std::endl;
+
+    /*
+    auto quest2 = new ServerQuest(database, "id2", "caption2", nullptr, nullptr );
+    quest2->create_on_database();
+    auto quest3 = new ServerQuest(database, "id3", "caption3", nullptr, nullptr );
+    quest3->create_on_database();
+    auto quest4 = new ServerQuest(database, "id4", "caption4", nullptr, nullptr );
+    quest4->create_on_database();
+    */
+
+    /*
+    using namespace Sidequest::Server;
+    Query* all_quests = database->create_query("SELECT * FROM quest");
+    all_quests->execute();
+    for (auto it = all_quests->begin(); it != all_quests->end(); ++it) {
+        auto row = *it;
+        std::cout << row["id"] << ", " << row["caption"] << ", " << row["parent"] << std::endl;
+    }
+    */
 
     return 0;
 }

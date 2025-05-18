@@ -38,6 +38,8 @@ add_library(server_lib ${SERVER_SOURCES}
 		src/server/storage/database_exceptions.cpp
 		src/server/storage/Query.cpp
 		src/server/storage/Query.h
+		src/server/model/server_quest.cpp
+		src/server/model/server_quest.h
 )
 # Ensures that server_lib compiles before sidequest_lib, no effect on linking -> target_link_libraries
 add_dependencies(server_lib sidequest_lib)
