@@ -30,8 +30,6 @@ namespace Sidequest::Server {
     ServerQuest::~ServerQuest() = default;
 
 
-
-
     void ServerQuest::create_on_database() {
         // save owner if not in database only
         try {
@@ -51,7 +49,7 @@ namespace Sidequest::Server {
         if (parent) {
             query.bind(4, parent->get_id());
         } else {
-            query.bind(4, "null");
+            query.bind_null(4);
         }
         if (query.execute() != SQLITE_DONE)
             throw UnableToCreateObjectException("id");
@@ -100,7 +98,8 @@ namespace Sidequest::Server {
     void ServerQuest::load_sub_quests() {
         auto query = Query(database, "SELECT * FROM quest WHERE parent_id = ?;");
         query.bind(1, this->id);
-        auto sub_quests = std::vector<Quest*>();
+
+        this->subquests.clear();
 
         int status = query.execute();
         if (status != SQLITE_ROW && status != SQLITE_DONE) {
@@ -111,25 +110,22 @@ namespace Sidequest::Server {
         if (status == SQLITE_ROW) {
             for (auto it = query.begin(); it != query.end(); ++it) {
                 auto row = *it;
-                std::cout << "+++" << std::endl;
-                sub_quests.push_back(
+
+                auto subquest =
                     new ServerQuest(
                         database,
                         row["id"],
                         owner,
-                        row["caption"],
-                        parent,
-                        std::vector<Quest*>())
+                     row["caption"],
+                        this,
+                        std::vector<Quest*>()
                 );
-                std::cout
-                << row["id"]
-                << ", " << row["owner_id"]
-                << ", " << row["caption"]
-                << ", " << row["parent_id"]
-                << std::endl;
+                subquest->read_on_database();
+                subquests.push_back(subquest);
             }
         }
     }
+
 
 
     /* main quests dont have a parent

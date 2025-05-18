@@ -62,7 +62,7 @@ namespace Sidequest::Server {
 
 
 	void ServerUser::load_main_quests() {
-		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ?;");
+		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? AND parent_id IS NULL;");
 		query.bind(1, email);
 
 		this->main_quests = std::vector<Quest*>();

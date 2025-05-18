@@ -102,6 +102,9 @@ namespace Sidequest::Server {
             throw ParameterBindException("error binding parameter " + std::to_string(parameter_index) + " to " + std::to_string(value), error_code);
         }
     }
+    void Query::bind_null(int index) {
+        sqlite3_bind_null(prepared_statement, index);
+    }
 
     Query::Query(Database* database, std::string statement_sql)
         : database(database), STATEMENT_SQL(statement_sql) {
