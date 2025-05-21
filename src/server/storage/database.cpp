@@ -48,20 +48,26 @@ namespace Sidequest::Server {
 	Database::Database() {
 		open(DEFAULT_PATH_TO_DATABASE);
 		init_schema();
+		statement_cache = new StatementCache( this );
+		column_cache = new ColumnCache( this );
 	}
 
 	// Create database in custom location
 	Database::Database(std::string path_to_database) : PATH_TO_DATABASE(path_to_database) {
 		open(PATH_TO_DATABASE);
 		init_schema();
+		statement_cache = new StatementCache( this );
+		column_cache = new ColumnCache( this );
 	}
 
 	Database::~Database() {
 		if ( is_open )
 			close();
+		delete statement_cache;
+		delete column_cache;
 	}
 
-	sqlite3* Database::get_handle() {
+	sqlite3* Database::get_handle() const {
 		return handle;
 	}
 
@@ -77,5 +83,13 @@ namespace Sidequest::Server {
 	void Database::close() {
 		sqlite3_close( handle );
 		is_open = false;
+	}
+
+	PreparedStatement* Database::get_prepared_statement(const Query& query) const {
+		return statement_cache->get_statement(query.get_sql());
+	}
+
+	void Database::add_prepared_statement(const Query& query) const {
+		statement_cache->add_statement(query.get_sql());
 	}
 }

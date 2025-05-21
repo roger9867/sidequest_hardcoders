@@ -70,7 +70,8 @@ namespace Sidequest::Server {
         void bind(int parameter_index, std::string value);
         void bind(int parameter_index, unsigned int value);
         void bind_null(int index);
-        sqlite3_stmt * get_prepared_statement();
+        //sqlite3_stmt * get_prepared_statement();
+        std::string get_sql() const;
     };
 }
 

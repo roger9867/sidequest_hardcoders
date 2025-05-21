@@ -32,9 +32,11 @@ namespace Sidequest::Server {
         return column_indices;
     }
 
+    /*
     sqlite3_stmt* Query::get_prepared_statement() {
         return prepared_statement;
     }
+    */
 
 
     int Query::read_int_value(std::string column_name) {
@@ -57,6 +59,9 @@ namespace Sidequest::Server {
         return reinterpret_cast<const char*>(text);
     }
 
+    std::string Query::get_sql() const {
+        return STATEMENT_SQL;
+    }
 
     int Query::execute() {
         int code = -1;
@@ -77,12 +82,19 @@ namespace Sidequest::Server {
         }
     }
 
+
     void Query::prepare() {
-        int result = sqlite3_prepare_v2(database->get_handle(), STATEMENT_SQL.c_str(), -1, &prepared_statement, nullptr);
-        if (result != SQLITE_OK) {
-            throw ParameterBindException(STATEMENT_SQL, result);
+        PreparedStatement* statement = database->get_prepared_statement(STATEMENT_SQL);
+        if (statement == nullptr) {
+            int result = sqlite3_prepare_v2(database->get_handle(), STATEMENT_SQL.c_str(), -1, &statement, nullptr);
+            if (result != SQLITE_OK) {
+                throw ParameterBindException(STATEMENT_SQL, result);
+            }
+            database->add_prepared_statement(statement);
         }
+        prepared_statement = statement;
     }
+
     void Query::bind(int parameter_index, std::string value) {
         if (prepared_statement == nullptr) {
             prepare();

@@ -3,9 +3,10 @@
 
 #include <string>
 #include <unordered_map>
-
 #include <sqlite3.h>
 #include "Query.h"
+#include "column_cache.h"
+#include "statement_cache.h"
 
 
 namespace Sidequest::Server {
@@ -16,15 +17,19 @@ namespace Sidequest::Server {
 	class Query;
 
 	class Database {
+		friend class StatementCache;
+		friend class ColumnCache;
 
 	protected:
 		const std::string DEFAULT_PATH_TO_DATABASE = "sidequest.db";
 		const std::string PATH_TO_SCHEMA = "../create_database.sql";
 		const std::string PATH_TO_DATABASE;
 
+		StatementCache* statement_cache;
+		ColumnCache* column_cache;
+
 		bool is_open = false;
 		sqlite3* handle = nullptr;
-		friend class StatementCache;
 
 		void open(std::string filepath_of_database);
 		void close();
@@ -43,9 +48,12 @@ namespace Sidequest::Server {
 
 		// reset database
 		void recreate();
-
-		sqlite3* get_handle();
 		Query* create_query(std::string sql_statement);
+
+		sqlite3* get_handle() const;
+		PreparedStatement* get_prepared_statement(const Query& query) const;
+		void add_prepared_statement(const Query& query) const;
+		ColumnCache* get_column();
 	};
 };
 
