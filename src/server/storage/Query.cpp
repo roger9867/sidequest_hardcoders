@@ -84,13 +84,13 @@ namespace Sidequest::Server {
 
 
     void Query::prepare() {
-        PreparedStatement* statement = database->get_prepared_statement(STATEMENT_SQL);
+        PreparedStatement* statement = database->get_prepared_statement(*this);
         if (statement == nullptr) {
             int result = sqlite3_prepare_v2(database->get_handle(), STATEMENT_SQL.c_str(), -1, &statement, nullptr);
             if (result != SQLITE_OK) {
                 throw ParameterBindException(STATEMENT_SQL, result);
             }
-            database->add_prepared_statement(statement);
+            database->add_prepared_statement(*this);
         }
         prepared_statement = statement;
     }

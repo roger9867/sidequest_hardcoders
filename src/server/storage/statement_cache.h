@@ -14,6 +14,7 @@
 #include "database_exceptions.h"
 
 namespace Sidequest::Server {
+
         class Database;
         class Query;
 

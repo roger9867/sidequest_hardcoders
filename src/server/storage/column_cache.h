@@ -10,8 +10,15 @@
 #include "Query.h"
 
 
+
 namespace Sidequest::Server {
+
+    typedef sqlite3_stmt PreparedStatement;
+    typedef std::unordered_map<std::string, int> ColumnMap;
+
         class Database;
+
+
 
         class ColumnCache {
         public:

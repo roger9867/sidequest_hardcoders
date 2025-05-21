@@ -7,11 +7,6 @@
 #include <iostream>
 #include <ostream>
 
-#include "server_user.h"
-#include "storage/database_exceptions.h"
-#include "storage/Query.h"
-
-
 namespace Sidequest::Server {
     ServerQuest::ServerQuest(Database* database)
         : Persistable(database) {

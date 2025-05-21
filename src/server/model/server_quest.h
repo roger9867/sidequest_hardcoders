@@ -6,6 +6,9 @@
 #define SERVER_QUEST_H
 #include "model/quest.h"
 #include "storage/persistable.h"
+#include "server_user.h"
+#include "storage/database_exceptions.h"
+#include "storage/Query.h"
 
 
 namespace Sidequest::Server {
