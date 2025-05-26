@@ -18,13 +18,11 @@ namespace Sidequest::Server {
 
         class Database;
 
-
-
         class ColumnCache {
         public:
             typedef std::unordered_map<std::string, int> ColumnMap;
 
-            ColumnCache( Database* database );
+            ColumnCache(Database* database);
             virtual ~ColumnCache();
 
             //int get_column_index(PreparedStatement* statement, std::string column_name);

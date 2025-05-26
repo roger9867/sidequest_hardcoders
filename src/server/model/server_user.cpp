@@ -22,38 +22,49 @@ namespace Sidequest::Server {
 
 
 	void ServerUser::create_on_database() {
+
 		Query query = Query(database,"INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);");
+
+		query.reset_statement();
+
 		query.bind(1, email);
 		query.bind(2, display_name);
 		query.bind(3, password);
 		if (query.execute() != SQLITE_DONE)
 			throw UnableToCreateObjectException(email);
+		query.reset_statement();
 	}
 
 
 	void ServerUser::read_on_database() {
 		Query query = Query(database,"SELECT * FROM user WHERE email = ?;");
+		query.reset_statement();
 		query.bind(1, email);
 		if (query.execute() != SQLITE_ROW)
 			throw UnableToReadObjectException(email);
 		display_name = query.read_text_value("display_name");
 		password     = query.read_text_value("password");
+		query.reset_statement();
 	}
 
 	void ServerUser::update_on_database() {
 		Query query = Query(database,"UPDATE user set display_name=?, password=? WHERE email=?;");
+		query.reset_statement();
 		query.bind(1, display_name);
 		query.bind(2, password);
 		query.bind(3, email);
 		if (query.execute() != SQLITE_DONE)
 			throw UnableToUpdateObjectException(display_name);
+		query.reset_statement();
 	}
 
 	void ServerUser::delete_on_database() {
 		Query query = Query(database,"DELETE FROM user WHERE email=?;");
+		query.reset_statement();
 		query.bind(1, email);
 		if (query.execute() != SQLITE_DONE)
 			throw UnableToDeleteObjectException(email);
+		query.reset_statement();
 	}
 
 	std::string ServerUser::class_id() {
@@ -63,6 +74,7 @@ namespace Sidequest::Server {
 
 	void ServerUser::load_main_quests() {
 		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? AND parent_id IS NULL;");
+		query.reset_statement();
 		query.bind(1, email);
 
 		this->main_quests = std::vector<Quest*>();
@@ -84,7 +96,7 @@ namespace Sidequest::Server {
 						std::vector<Quest*>()));
 			}
 		}
-
+		query.reset_statement();
 	}
 
 }

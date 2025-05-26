@@ -33,7 +33,7 @@ namespace Sidequest {
 
 	protected:
 		Id id;
-		std::string caption = "null";
+		std::string caption = "Empty.";
 		Quest* parent = nullptr;
 		std::vector<Quest*> subquests = std::vector<Quest*>();
 		User* owner = nullptr;

@@ -7,24 +7,42 @@
 namespace Sidequest::Server {
 
         StatementCache::StatementCache(Database* database)
-            : database(database) {}
+            : database(database)
+        {
+        }
 
-        StatementCache::~StatementCache() {}
+        StatementCache::~StatementCache()
+        {
+        }
 
-        PreparedStatement* StatementCache::get_statement(std::string statement_sql) {
-            auto statement = prepared_statements.find(statement_sql);
-            if (statement == prepared_statements.end())
+        PreparedStatement* StatementCache::get_statement(const std::string& statement_sql)
+        {
+            //cached_prepared_statements[statement_sql].cache_mutex.lock();
+
+            auto statement = cached_statements.find(statement_sql);
+            if (statement == cached_statements.end())
                 return nullptr;
             return statement->second;
         }
 
-        PreparedStatement* StatementCache::add_statement(std::string statement_sql) {
+        void StatementCache::release_statement(PreparedStatement* statement)
+        {
+            //cached_prepared_statements[statement->]
+            sqlite3_reset(statement);
+            sqlite3_clear_bindings(statement);
+        }
+
+
+        PreparedStatement* StatementCache::add_statement(const std::string& statement_sql)
+        {
             PreparedStatement* statement;
             auto result = sqlite3_prepare_v2(database->handle, statement_sql.c_str(), -1, &statement, nullptr);
-            if (result != SQLITE_OK) {
-                throw ParameterBindException( statement_sql, result );
+            if (result != SQLITE_OK)
+            {
+                throw ParameterBindException(statement_sql, result);
             }
-            prepared_statements[statement_sql] = statement;
+            cached_statements[statement_sql] = statement;
             return statement;
+            //return statement->cached_statement;
         }
 }

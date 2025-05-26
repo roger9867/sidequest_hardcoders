@@ -15,11 +15,7 @@ namespace Sidequest::Server {
         return (*columnmap)[column_name];
     }
 
-
-    ColumnMap* Query::get_columnmap() {
-        return columnmap;
-    }
-
+    /*
     ColumnMap* Query::get_column_mapping() {
         auto column_indices = new std::unordered_map<std::string, int>();
         int columnCount = sqlite3_column_count(prepared_statement);
@@ -31,12 +27,13 @@ namespace Sidequest::Server {
         }
         return column_indices;
     }
+    */
 
-    /*
-    sqlite3_stmt* Query::get_prepared_statement() {
+
+    PreparedStatement* Query::get_prepared_statement() const {
         return prepared_statement;
     }
-    */
+
 
 
     int Query::read_int_value(std::string column_name) {
@@ -45,33 +42,36 @@ namespace Sidequest::Server {
         return result;
     }
 
-    std::string Query::read_text_value(std::string column_name) {
-        if (!columnmap || columnmap->find(column_name) == columnmap->end()) {
+    std::string Query::read_text_value(std::string column_name)
+    {
+        if (!columnmap || columnmap->find(column_name) == columnmap->end())
             throw std::runtime_error("Column name not found: " + column_name);
-        }
+
         int index = (*columnmap)[column_name];
         const unsigned char* text = sqlite3_column_text(prepared_statement, index);
 
-        if (text == nullptr) {
+        if (text == nullptr)
             return "";  // oder optional: throw std::runtime_error(...)
-        }
 
         return reinterpret_cast<const char*>(text);
     }
 
-    std::string Query::get_sql() const {
+    std::string Query::get_sql() const
+    {
         return STATEMENT_SQL;
     }
 
-    int Query::execute() {
+    int Query::execute()
+    {
         int code = -1;
-        if (!((code = sqlite3_step(prepared_statement)) == SQLITE_DONE || code == SQLITE_ROW)) {
+        if (!((code = sqlite3_step(prepared_statement)) == SQLITE_DONE || code == SQLITE_ROW))
             reset_statement();
-        }
-        if (code == SQLITE_ROW && columnmap == nullptr) {
-            columnmap = get_column_mapping(); // Existenz der Map garantieren
-        }
+
+        if (code == SQLITE_ROW && columnmap == nullptr)
+            columnmap = database->get_column_map(*this); // Existenz der Map garantieren
+
         if (code == SQLITE_ROW || code == SQLITE_DONE) is_executed = true;
+
         return code;
     }
 
@@ -79,38 +79,38 @@ namespace Sidequest::Server {
     void Query::reset_statement() {
         if (prepared_statement) {
             sqlite3_reset(prepared_statement);
+            sqlite3_clear_bindings(prepared_statement);
         }
     }
 
 
-    void Query::prepare() {
-        PreparedStatement* statement = database->get_prepared_statement(*this);
-        if (statement == nullptr) {
-            int result = sqlite3_prepare_v2(database->get_handle(), STATEMENT_SQL.c_str(), -1, &statement, nullptr);
-            if (result != SQLITE_OK) {
-                throw ParameterBindException(STATEMENT_SQL, result);
-            }
-            database->add_prepared_statement(*this);
-        }
-        prepared_statement = statement;
-    }
-
-    void Query::bind(int parameter_index, std::string value) {
+    Query::Query(Database* database, std::string statement_sql)
+        : database(database)
+        , STATEMENT_SQL(statement_sql)
+    {
+        if (statement_sql == "SELECT * FROM quest WHERE parent_id=?;") std::cout << "Load_Sub_Quests" << std::endl;
+        prepared_statement = database->get_prepared_statement(*this);
         if (prepared_statement == nullptr) {
-            prepare();
+            prepared_statement = database->add_prepared_statement(*this);
         }
+        // reset and unbind in case
+        reset_statement();
+    }
+
+
+
+
+
+    // String, Wert oder Null auf die Parameter binden
+    void Query::bind(int parameter_index, std::string value) {
         int error_code = sqlite3_bind_text(prepared_statement, parameter_index, value.c_str(), -1, SQLITE_TRANSIENT);
         if (error_code != SQLITE_OK) {
             throw ParameterBindException("error binding parameter " + std::to_string(parameter_index) + " to " + value, error_code);
         }
     }
     void Query::bind(int parameter_index, unsigned int value) {
-        if (prepared_statement == nullptr) {
-            prepare();
-        }
         int error_code = sqlite3_bind_int(prepared_statement, parameter_index, value );
         if (error_code != SQLITE_OK) {
-            sqlite3_finalize(prepared_statement);
             throw ParameterBindException("error binding parameter " + std::to_string(parameter_index) + " to " + std::to_string(value), error_code);
         }
     }
@@ -118,17 +118,29 @@ namespace Sidequest::Server {
         sqlite3_bind_null(prepared_statement, index);
     }
 
-    Query::Query(Database* database, std::string statement_sql)
-        : database(database), STATEMENT_SQL(statement_sql) {
-        prepare();
-    }
+
+
+
+
+
+
+
+
 
     Query::~Query() {
         if (prepared_statement) {
-            // completely release ressource
-            sqlite3_finalize(prepared_statement);
+            // Reset ressource and unlock it
+            database->release_prepared_statement(prepared_statement);
         }
     }
+
+
+
+
+
+
+
+
 
     bool Query::QueryIterator::operator!=(const Query::QueryIterator& other) const {
         return is_end != other.is_end;
@@ -145,14 +157,16 @@ namespace Sidequest::Server {
 
             if (code != SQLITE_ROW) {
                 is_end = true;
-            } else if (!query->get_columnmap()) {
-                query->columnmap = query->get_column_mapping();
+            } else if (!query->columnmap) {
+                query->columnmap = query->database->get_column_map(*query);
             }
         }
     }
 
-    Query::QueryIterator& Query::QueryIterator::operator++() {
-        if (!is_end) {
+    Query::QueryIterator& Query::QueryIterator::operator++()
+    {
+        if (!is_end)
+        {
             int code = sqlite3_step(query->prepared_statement);
             if (code != SQLITE_ROW) {
                 is_end = true;
@@ -160,11 +174,13 @@ namespace Sidequest::Server {
         }
         return *this;
     }
-    std::unordered_map<std::string, std::string> Query::QueryIterator::operator*() const {
+
+    std::unordered_map<std::string, std::string> Query::QueryIterator::operator*() const
+    {
         if (is_end) throw std::out_of_range("Dereferencing end iterator");
 
         std::unordered_map<std::string, std::string> row;
-        auto* columnmap = query->get_columnmap();
+        auto* columnmap = query->columnmap;
         for (const auto& [name, index] : *columnmap) {
             const unsigned char* val = sqlite3_column_text(query->prepared_statement, index);
             row[name] = val ? reinterpret_cast<const char*>(val) : "";
@@ -172,10 +188,13 @@ namespace Sidequest::Server {
         return row;
     }
 
-    Query::QueryIterator Query::begin() {
+    Query::QueryIterator Query::begin()
+    {
         return QueryIterator(this);
     }
-    Query::QueryIterator Query::end() {
+
+    Query::QueryIterator Query::end()
+    {
         return QueryIterator(this, true);
     }
 

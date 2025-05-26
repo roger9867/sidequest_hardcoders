@@ -32,9 +32,13 @@ using namespace Sidequest::Server;
 TEST_F(CRUDTests, OPEN_DATABASE) {
 }
 
+
 TEST_F(CRUDTests, CRUD_USER_CREATE) {
+
 	auto user = new ServerUser( database, "crud_user_create@hs-aalen.de", "Temporary User", "");
+
 	user->create_on_database();
+
 	delete(user);
 	user = nullptr;
 
@@ -43,7 +47,9 @@ TEST_F(CRUDTests, CRUD_USER_CREATE) {
 
 	EXPECT_EQ(user2->get_display_name(), "Temporary User");
 	delete(user2);
+
 }
+
 
 TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 	auto user = new ServerUser(database, "crud_user_create_double@hs-aalen.de", "Temporary User", "");
@@ -62,6 +68,7 @@ TEST_F(CRUDTests, CRUD_USER_CREATE_DOUBLE) {
 		user = nullptr;
 	}
 }
+
 
 TEST_F(CRUDTests, CRUD_USER_READ) {
 	auto user = new ServerUser(database, "crud_user_read@hs-aalen.de", "Temporary User", "");
@@ -88,6 +95,7 @@ TEST_F(CRUDTests, CRUD_USER_UPDATE) {
 	delete(user2);
 }
 
+
 TEST_F(CRUDTests, CRUD_USER_DELETE) {
 	auto user = new ServerUser(database, "crud_user_delete@hs-aalen.de", "Temporary User", "");
 	user->create_on_database();
@@ -107,6 +115,7 @@ TEST_F(CRUDTests, CRUD_USER_DELETE) {
 	{
 	}
 }
+
 
 TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
 

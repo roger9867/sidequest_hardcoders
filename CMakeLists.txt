@@ -44,6 +44,7 @@ add_library(server_lib ${SERVER_SOURCES}
 		src/server/storage/statement_cache.h
 		src/server/storage/column_cache.cpp
 		src/server/storage/column_cache.h
+		src/server/storage/prepared_statement.h
 )
 # Ensures that server_lib compiles before sidequest_lib, no effect on linking -> target_link_libraries
 add_dependencies(server_lib sidequest_lib)
@@ -83,6 +84,7 @@ generate_source_tree(TEST_SOURCES "${TEST_SOURCE_DIRS}" "${FILE_TYPES}")
 add_executable(
   unit_tests
   ${TEST_SOURCES}
+		src/unit_tests/quest_threadding_test.cpp
 )
 target_link_libraries(
   unit_tests

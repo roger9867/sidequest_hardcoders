@@ -7,37 +7,28 @@
 #include <string>
 #include <unordered_map>
 
+
 #include "database.h"
 #include "sqlite3.h"
+#include "prepared_statement.h"
 
 namespace Sidequest::Server {
-
-    typedef sqlite3_stmt PreparedStatement;
-    typedef std::unordered_map<std::string, int> ColumnMap;
 
     class Database;
 
     class Query {
 
-
     public:
         class QueryIterator {
-
         public:
             explicit QueryIterator(Query* query, bool is_end = false);
-
             QueryIterator& operator++();           // Prefix increment
-
             bool operator!=(const QueryIterator& other) const;
-
             std::unordered_map<std::string, std::string> operator*() const;
-
-
         private:
             Query* query;
             bool is_end;
         };
-
         QueryIterator begin();
         QueryIterator end();
 
@@ -50,28 +41,29 @@ namespace Sidequest::Server {
 
         int get_column_index(std::string column_name);
 
-        ColumnMap* get_columnmap();
-        ColumnMap* get_column_mapping();
+        //ColumnMap* get_columnmap();
+        //ColumnMap* get_column_mapping();
 
         void prepare();
-        void reset_statement();
 
         bool is_executed = 0;
 
-
     public:
+
         Query(Database* database, std::string statement_sql);
         ~Query();
-
-        int read_int_value(std::string column_name);
-        std::string read_text_value(std::string column_name);
-        int execute();
 
         void bind(int parameter_index, std::string value);
         void bind(int parameter_index, unsigned int value);
         void bind_null(int index);
-        //sqlite3_stmt * get_prepared_statement();
+
+        int read_int_value(std::string column_name);
+        std::string read_text_value(std::string column_name);
+        int execute();
+        PreparedStatement* get_prepared_statement() const;
         std::string get_sql() const;
+        //Columnget_column_map() const;
+        void reset_statement();
     };
 }
 

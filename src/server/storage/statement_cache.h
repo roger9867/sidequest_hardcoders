@@ -5,13 +5,14 @@
 #ifndef STATEMENT_CACHE_H
 #define STATEMENT_CACHE_H
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 
 #include "Query.h"
-#include "statement_cache.h"
 #include "database.h"
 #include "database_exceptions.h"
+#include "prepared_statement.h"
 
 namespace Sidequest::Server {
 
@@ -19,15 +20,20 @@ namespace Sidequest::Server {
         class Query;
 
         class StatementCache {
+            //struct CachedStatement {
+            //CachedStatement* cached_statement;
+              //  std::mutex cache_mutex = std::mutex();
+            //};
         public:
-            StatementCache( Database* database );
+            StatementCache(Database* database);
             virtual ~StatementCache();
 
-            PreparedStatement* get_statement(std::string statement_sql);
-            PreparedStatement* add_statement(std::string statement_sql);
+            PreparedStatement* get_statement(const std::string& statement_sql);
+            PreparedStatement* add_statement(const std::string& statement_sql);
+            void release_statement(PreparedStatement* statement);
 
         protected:
-            std::unordered_map<std::string, PreparedStatement*> prepared_statements;
+            std::unordered_map<std::string, PreparedStatement*> cached_statements;
             Database* database;
         };
 };

@@ -21,14 +21,14 @@ namespace Sidequest::Server {
         }
         */
 
-        ColumnCache::ColumnMap* ColumnCache::get_columns_of_statement( PreparedStatement* statement ) {
+        ColumnCache::ColumnMap* ColumnCache::get_columns_of_statement(PreparedStatement* statement) {
             auto entry = columns_by_statement.find(statement);
             if (entry == columns_by_statement.end())
                 return add_columns_of_statement( statement );
             return entry->second;
         }
 
-        ColumnCache::ColumnMap* ColumnCache::add_columns_of_statement( PreparedStatement* statement) {
+        ColumnCache::ColumnMap* ColumnCache::add_columns_of_statement(PreparedStatement* statement) {
             auto column_indices = new std::unordered_map<std::string, int>();
             int columnCount = sqlite3_column_count( statement );
             for (int i = 0; i < columnCount; ++i) {

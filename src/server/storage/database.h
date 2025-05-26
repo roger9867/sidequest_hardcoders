@@ -17,6 +17,10 @@ namespace Sidequest::Server {
 	class Query;
 
 	class Database {
+
+		typedef std::unordered_map<std::string, int> ColumnMap;
+		typedef sqlite3_stmt PreparedStatement;
+
 		friend class StatementCache;
 		friend class ColumnCache;
 
@@ -48,13 +52,16 @@ namespace Sidequest::Server {
 
 		// reset database
 		void recreate();
-		Query* create_query(std::string sql_statement);
+		//Query* create_query(std::string sql_statement);
 
 		sqlite3* get_handle() const;
 		PreparedStatement* get_prepared_statement(const Query& query) const;
-		void add_prepared_statement(const Query& query) const;
-		ColumnCache* get_column();
+		PreparedStatement* add_prepared_statement(const Query& query) const;
+		void release_prepared_statement(PreparedStatement* statement) const;
+
+		ColumnMap* get_column_map(const Query& query) const ;
+		ColumnMap* add_column_map(const Query& query);
 	};
-};
+}
 
 #endif  //DATABASE_H

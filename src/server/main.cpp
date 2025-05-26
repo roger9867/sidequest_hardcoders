@@ -29,9 +29,9 @@ int main() {
     user4->create_on_database();
 
     using namespace Sidequest::Server;
-    Query* all_users = database->create_query("SELECT * FROM user u WHERE u.password > 2 ");
-    all_users->execute();
-    for (auto it = all_users->begin(); it != all_users->end(); ++it) {
+    Query all_users = Query(database, "SELECT * FROM user u WHERE u.password > 2 ");
+    all_users.execute();
+    for (auto it = all_users.begin(); it != all_users.end(); ++it) {
 
         auto row = *it;
         std::cout << row["email"] << ", " << row["display_name"] << ", " << row["password"] << std::endl;

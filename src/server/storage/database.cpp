@@ -7,10 +7,6 @@
 
 namespace Sidequest::Server {
 
-	Query* Database::create_query(std::string sql_statement) {
-		return new Query(this, sql_statement);
-	}
-
 	void Database::clean_init() {
 		close();
 		recreate();
@@ -43,6 +39,12 @@ namespace Sidequest::Server {
 		buffer << file.rdbuf();
 		return buffer.str();
 	}
+
+
+	void Database::release_prepared_statement(PreparedStatement* statement) const {
+		statement_cache->release_statement(statement);
+	}
+
 
 	// Default constructor creates new database in default location
 	Database::Database() {
@@ -89,7 +91,16 @@ namespace Sidequest::Server {
 		return statement_cache->get_statement(query.get_sql());
 	}
 
-	void Database::add_prepared_statement(const Query& query) const {
-		statement_cache->add_statement(query.get_sql());
+	PreparedStatement* Database::add_prepared_statement(const Query& query) const {
+		return statement_cache->add_statement(query.get_sql());
 	}
+
+	ColumnMap* Database::get_column_map(const Query& query) const {
+		return column_cache->get_columns_of_statement(query.get_prepared_statement());
+	}
+
+	ColumnMap* Database::add_column_map(const Query& query) {
+		return column_cache->add_columns_of_statement(query.get_prepared_statement());
+	}
+
 }
