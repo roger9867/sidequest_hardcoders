@@ -7,9 +7,11 @@
 #include <model/user.h>
 #include <storage/persistable.h>
 
+#include "network/serializable_user.h"
+
 namespace Sidequest::Server {
 
-	class ServerUser : public Sidequest::User, public Persistable {
+	class ServerUser : public virtual Sidequest::User, public Persistable, public SerializableUser {
 	 public:
 
 		explicit ServerUser(Database* database);

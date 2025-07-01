@@ -10,7 +10,9 @@
 
 #include "database.h"
 #include "sqlite3.h"
+#include "../sidequest/model/id.h"
 #include "prepared_statement.h"
+#include "model/server_quest.h"
 
 namespace Sidequest::Server {
 

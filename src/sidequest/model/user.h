@@ -9,19 +9,20 @@ namespace Sidequest {
 	class Quest;
 
 	class User {
-	protected:
+	 protected:
 		std::string display_name;
 		std::string email;
 		std::string password;
-	public:
+	 public:
 
 		std::vector<Quest*> main_quests = std::vector<Quest*>();
 
 		User();
 		User(std::string email);
 		User(std::string email, std::string display_name, std::string password);
-		~User();
+		virtual ~User();
 
+		std::string get_id() const;
 		std::string get_email() const;
 		std::string get_display_name() const;
 		std::string get_password() const;
@@ -41,6 +42,7 @@ namespace Sidequest {
 			add_main_quests(rest...);  // recursive call
 		}
 	};
-}
+
+}  // namespace Sidequest
 
 #endif  //USER_H

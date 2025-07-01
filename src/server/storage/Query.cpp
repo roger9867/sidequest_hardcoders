@@ -35,7 +35,6 @@ namespace Sidequest::Server {
     }
 
 
-
     int Query::read_int_value(std::string column_name) {
         int column_index = get_column_index(column_name);
         int result = static_cast<int>(sqlite3_column_int64(prepared_statement, column_index) );
@@ -88,7 +87,6 @@ namespace Sidequest::Server {
         : database(database)
         , STATEMENT_SQL(statement_sql)
     {
-        if (statement_sql == "SELECT * FROM quest WHERE parent_id=?;") std::cout << "Load_Sub_Quests" << std::endl;
         prepared_statement = database->get_prepared_statement(*this);
         if (prepared_statement == nullptr) {
             prepared_statement = database->add_prepared_statement(*this);

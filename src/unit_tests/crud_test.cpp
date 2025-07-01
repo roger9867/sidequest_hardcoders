@@ -119,20 +119,37 @@ TEST_F(CRUDTests, CRUD_USER_DELETE) {
 
 TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
 
+
+
 	auto owner = new ServerUser(database, "test_user_mail");
-	auto quest1 = new ServerQuest(database, "id1", owner, "caption1", nullptr, std::vector<Sidequest::Quest*>() );
+	auto quest1 = new ServerQuest(database,
+								"id1",
+								  Sidequest::Quest::initial,
+								  "title1",
+								  "caption1",
+								  owner,
+								  owner,
+								  nullptr,
+								  std::vector<Sidequest::Quest*>());
+
 	quest1->create_on_database();
+
 
 	delete(quest1);
 	quest1 = nullptr;
-	delete owner;
+	delete(owner);
 	owner = nullptr;
 
 	auto quest2 = new ServerQuest(database, "id1");
+
 	quest2->read_on_database();
 
+	std::cout << "before segfault" << std::endl;
 	EXPECT_EQ(quest2->get_caption(), "caption1");
+	EXPECT_EQ(quest2->get_title(), "title1");
 	EXPECT_EQ(quest2->get_owner()->get_email(), "test_user_mail");
+	EXPECT_EQ(quest2->get_editor()->get_email(), "test_user_mail");
+	std::cout << "before segfault" << std::endl;
 	delete(quest2);
 	quest2 = nullptr;
 
@@ -141,11 +158,28 @@ TEST_F(CRUDTests, CRUD_QUEST_CREATE) {
 
 TEST_F(CRUDTests, CRUD_QUEST_CREATE_DOUBLE) {
 	auto owner1 = new ServerUser(database, "test_user1_mail");
-	auto quest1 = new ServerQuest(database, "id1", owner1, "caption1", nullptr, std::vector<Sidequest::Quest*>() );
+	auto quest1 = new ServerQuest(database,
+		"id1",
+		Sidequest::Quest::initial,
+		"title1",
+		"caption1",
+		owner1,
+		owner1,
+		nullptr,
+		std::vector<Sidequest::Quest*>() );
 	quest1->create_on_database();
 	delete(quest1);
 	try {
-		auto quest1 = new ServerQuest(database, "id1", owner1, "caption2", nullptr, std::vector<Sidequest::Quest*>() );
+		auto quest1 = new ServerQuest(
+			database,
+			"id1",
+			Sidequest::Quest::initial,
+			"title1",
+			"caption2",
+			owner1,
+			owner1,
+			nullptr,
+			std::vector<Sidequest::Quest*>() );
 		quest1->create_on_database();
 		FAIL();
 	}
@@ -158,7 +192,7 @@ TEST_F(CRUDTests, CRUD_QUEST_CREATE_DOUBLE) {
 
 TEST_F(CRUDTests, CRUD_QUEST_READ) {
 	auto owner = new ServerUser(database, "test_user_mail");
-	auto quest = new ServerQuest(database, "id1", owner, "caption3", nullptr, std::vector<Sidequest::Quest*>() );
+	auto quest = new ServerQuest(database, "id1", Sidequest::Quest::initial, "title1", "caption3", owner, owner, nullptr, std::vector<Sidequest::Quest*>() );
 	quest->create_on_database();
 	delete(quest);
 	quest = nullptr;
@@ -172,13 +206,18 @@ TEST_F(CRUDTests, CRUD_QUEST_READ) {
 
 TEST_F(CRUDTests, CRUD_QUEST_UPDATE) {
 	auto owner = new ServerUser(database, "test_user_mail");
-	auto quest = new ServerQuest(database, "id1", owner, "caption3", nullptr, std::vector<Sidequest::Quest*>() );
+	auto quest = new ServerQuest(database, "id1", Sidequest::Quest::initial, "title1", "caption3", owner, owner, nullptr, std::vector<Sidequest::Quest*>() );
 	quest->create_on_database();
 	delete(owner);
 	owner = nullptr;
-	auto owner2 = new ServerUser(database, "test_user_mail_update");
+
+	auto owner_updated = new ServerUser(database, "new_owner_updated");
+	auto editor_updated = new ServerUser(database, "new_editor_updated");
+	quest->set_status(Sidequest::Quest::done);
+	quest->set_title("new title");
 	quest->set_caption("new caption");
-	quest->set_owner(owner2);
+	quest->set_owner(owner_updated);
+	quest->set_editor(editor_updated);
 	quest->update_on_database();
 	delete(quest);
 	quest = nullptr;
@@ -186,17 +225,31 @@ TEST_F(CRUDTests, CRUD_QUEST_UPDATE) {
 	quest = new ServerQuest(database, "id1");
 	quest->read_on_database();
 
+	EXPECT_EQ(quest->get_status(), Sidequest::Quest::done);
+	EXPECT_EQ(quest->get_title(), "new title");
 	EXPECT_EQ(quest->get_caption(), "new caption");
-	EXPECT_EQ(quest->get_owner()->get_email(), "test_user_mail_update");
+	EXPECT_EQ(quest->get_owner()->get_email(), "new_owner_updated");
+	EXPECT_EQ(quest->get_editor()->get_email(), "new_editor_updated");
+
+
 
 	delete(quest);
-	delete(owner2);
-	owner2 = nullptr;
+	delete(owner_updated);
+	owner_updated = nullptr;
 }
 
 TEST_F(CRUDTests, CRUD_QUEST_DELETE) {
 	auto owner = new ServerUser(database, "test_owner_mail@email.com");
-	auto quest = new ServerQuest(database, "id1", owner, "the caption.", nullptr, std::vector<Sidequest::Quest*>());
+	auto quest = new ServerQuest(
+		database,
+		"id1",
+		Sidequest::Quest::initial,
+		"title1",
+		"the caption.",
+		owner,
+		owner,
+		nullptr,
+		std::vector<Sidequest::Quest*>());
 	quest->create_on_database();
 	delete(owner);
 	owner = nullptr;

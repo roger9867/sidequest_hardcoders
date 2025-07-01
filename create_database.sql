@@ -4,10 +4,12 @@ CREATE TABLE user(
 	password TEXT NOT NULL
 );
 CREATE TABLE quest (
-            id TEXT PRIMARY KEY,
-	    owner_id TEXT REFERENCES user(email) NOT NULL ,	
-            caption TEXT NOT NULL,
-            parent_id TEXT,
-            FOREIGN KEY (parent_id) REFERENCES quest(id)
+    id TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    title TEXT NOT NULL,
+    caption TEXT NOT NULL,
+    owner_id TEXT NOT NULL REFERENCES user(email),
+    editor_id TEXT NOT NULL REFERENCES user(email),
+    parent_id TEXT REFERENCES quest(id)
 );
 

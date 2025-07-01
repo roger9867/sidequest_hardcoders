@@ -5,7 +5,6 @@
 #ifndef PREPARED_STATEMENT_H
 #define PREPARED_STATEMENT_H
 #include <string>
-#include <unordered_map>
 
 #include "sqlite3.h"
 

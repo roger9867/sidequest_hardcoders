@@ -16,6 +16,9 @@ namespace Sidequest {
 
 	User::~User() {}
 
+	std::string User::get_id() const {
+		return email;
+	}
 
 	std::string User::get_email() const {
 		return email;
@@ -38,4 +41,5 @@ namespace Sidequest {
 	void User::set_email(std::string email) {
 		this->email = email;
 	}
-}
+
+}  // namespace

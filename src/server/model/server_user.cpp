@@ -7,15 +7,19 @@
 namespace Sidequest::Server {
 
 	ServerUser::ServerUser(Database* database)
-		: Persistable(database) {}
-		
+		: Persistable(database)
+	    , SerializableUser("no_email") {
+	}
+
 	ServerUser::ServerUser(Database* database, std::string email)
 		: Persistable(database)
-		, User(email){}
+		, User(email)
+		, SerializableUser(email) {}
 
 	ServerUser::ServerUser(Database* database, std::string email, std::string display_name, std::string password)
 		: Persistable(database)
-		, User(email, display_name, password) {}
+		, User(email, display_name, password)
+	    , SerializableUser(email, display_name, password) {}
 
 	ServerUser::~ServerUser() = default;
 
@@ -24,7 +28,6 @@ namespace Sidequest::Server {
 	void ServerUser::create_on_database() {
 
 		Query query = Query(database,"INSERT INTO user(email, display_name, password) VALUES (?, ?, ?);");
-
 		query.reset_statement();
 
 		query.bind(1, email);
@@ -73,7 +76,7 @@ namespace Sidequest::Server {
 
 
 	void ServerUser::load_main_quests() {
-		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? AND parent_id IS NULL;");
+		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? AND parent_id IS NULL ORDER BY id;");
 		query.reset_statement();
 		query.bind(1, email);
 
@@ -86,14 +89,20 @@ namespace Sidequest::Server {
 		if (status == SQLITE_ROW) {
 			for (auto it = query.begin(); it != query.end(); ++it) {
 				auto row = *it;
-				this->main_quests.push_back(
-					new ServerQuest(
+				//this->main_quests.push_back(
+					ServerQuest* quest = new ServerQuest(
 						database,
 						row["id"],
-						this,
+						Quest::initial,
+						row["title"],
 						row["caption"],
+						this,
+						new ServerUser(database, row["editor_id"]),
 						nullptr,
-						std::vector<Quest*>()));
+						std::vector<Quest*>());
+				quest->set_status(
+					quest->string_to_status(row["status"]));
+				this->main_quests.push_back(quest);
 			}
 		}
 		query.reset_statement();
