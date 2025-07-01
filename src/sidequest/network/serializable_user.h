@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "json_serializable.h"
 #include "model/id.h"
 #include "model/user.h"
 #include "network/json_serializable.h"
@@ -21,7 +22,7 @@ namespace Sidequest {
         virtual ~SerializableUser();
 
         // implementation of JsonSerialisable
-        virtual Json to_json(bool full_serialise = true) override;
+        virtual Json to_json(SerializationMode mode = no_level, int depth = 0) override;
         virtual void from_json(const Json& json) override;
     };
 
