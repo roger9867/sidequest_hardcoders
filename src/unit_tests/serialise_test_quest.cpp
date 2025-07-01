@@ -17,11 +17,11 @@ class SerialiseTestsQuest : public ::testing::Test {
 	virtual ~SerialiseTestsQuest() {}
 
 
-	SerializableQuest* serialize_then_deserialize(SerializableQuest* original_quest) {
+	SerializableQuest* serialize_then_deserialize(SerializableQuest* original_quest, JsonSerializable::SerializationMode mode = JsonSerializable::one_level) {
 
 		//std::cout << "SerialiseTestsQuest::serialize_then_deserialize()" << std::endl;
 
-		auto json = original_quest->to_json();
+		auto json = original_quest->to_json(mode);
 		std::cout << "Before segfault" << std::endl;
 
 		std::string json_string = json.dump(4);
@@ -42,7 +42,7 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST) {
 
 	//std::cout << quest->to_json().dump(4) << std::endl;
 
-	auto new_quest = serialize_then_deserialize(quest);
+	auto new_quest = serialize_then_deserialize(quest, JsonSerializable::all_levels);
 	std::cout << "Before segfault" << std::endl;
 
 	ASSERT_EQ(quest->get_id(), "id1");
@@ -78,28 +78,25 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_PARENT) {
 	SerializableQuest* q_new = new SerializableQuest("id_of_child");
 	q_new->from_json(json_string);
 
-	/*
-	auto new_quest = serialize_then_deserialize(quest);
+	auto new_quest = serialize_then_deserialize(quest, JsonSerializable::one_level);
 	delete(quest);
 	delete(parent_quest);
 
-
-	ASSERT_EQ(new_quest->get_id(), "id1");
-	ASSERT_EQ(new_quest->get_title(), "Unit Test Quest");
-	ASSERT_EQ(new_quest->get_caption(), "Caption\ncan be several lines\nor not.");
+	ASSERT_EQ(new_quest->get_id(), "id_of_child");
+	ASSERT_EQ(new_quest->get_title(), "child quest");
+	ASSERT_EQ(new_quest->get_caption(), "Description\ncan be several lines\nor not.");
 	ASSERT_EQ(new_quest->get_status(), Quest::Status::done);
 	ASSERT_EQ(new_quest->get_owner(), nullptr);
 	ASSERT_EQ(new_quest->get_editor(), nullptr);
-	ASSERT_EQ(new_quest->get_parent()->get_id(), "id0.1");
-	ASSERT_EQ(new_quest->get_parent()->get_title(), "Unit Test Main Quest");
+	ASSERT_EQ(new_quest->get_parent()->get_id(), "id_of_parent");
+	ASSERT_EQ(new_quest->get_parent()->get_title(), "parent quest");
 
 	delete(new_quest);
-	*/
+
 }
 
-/*
 TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_OWNER_EDITOR) {
-	auto quest = new SerializableQuest("id1", Quest::Status::done, "Unit Test Quest", "Description\ncan be several lines\nor not.", nullptr, nullptr, nullptr);
+	auto quest = new SerializableQuest("id1", Quest::Status::done, "Unit Test Quest", "caption\ncan be several lines\nor not.", nullptr, nullptr, nullptr);
 
 	auto owner = new SerializableUser("unitest1@hs-aalen.de", "Unit Test User 1", "secret");
 	quest->set_owner(owner);
@@ -108,10 +105,10 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_OWNER_EDITOR) {
 	quest->set_editor(editor);
 	//quest->editor->get_email() = quest->editor->id;
 
-	quest->serialize_owner_recursive = true;
-	quest->serialize_editor_recursive = true;
+	//quest->serialize_owner_recursive = true;
+	//quest->serialize_editor_recursive = true;
 
-	auto new_quest = serialize_then_deserialize(quest);
+	auto new_quest = serialize_then_deserialize(quest, JsonSerializable::all_levels);
 	delete(quest);
 	delete(owner);
 	delete(editor);
@@ -125,4 +122,3 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_OWNER_EDITOR) {
 
 	delete(new_quest);
 }
-*/
