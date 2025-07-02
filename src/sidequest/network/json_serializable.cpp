@@ -14,13 +14,10 @@ namespace Sidequest {
         if (ptr == nullptr)
             return nullptr; // JSON null
 
-        // falls nur das Objekt selbst geladen werden soll, 1 objekt erstellen
         if (mode == SerializationMode::no_level) {
-            // Erstelle ein Objekt mit nur der ID drin statt nur String
             return Json::object({{"id", id.value()}});
         }
 
-        // falls nicht no_level, ptr to json, erstmal explizit nur all_levels
         if (mode == SerializationMode::one_level)
             return ptr->to_json(one_level, depth + 1);
 

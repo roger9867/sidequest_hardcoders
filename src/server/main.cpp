@@ -4,39 +4,65 @@
 #include <string>
 
 
+#include "controller/quest/quest_create_command.h"
+#include "controller/quest/quest_delete_command.h"
+#include "controller/quest/quest_read_command.h"
+#include "controller/quest/quest_update_command.h"
+#include "controller/user/user_create_command.h"
+#include "controller/user/user_delete_command.h"
+#include "controller/user/user_read_command.h"
+#include "controller/user/user_update_command.h"
 #include "storage/database.h"
 #include "model/server_user.h"
 
+#include "network/network_handler.h"
+#include "network/command_handler.h" // Beispiel
+
 int main() {
 
-    //std::cout << "Sidequest Server " << std::endl;
+    auto database = new Sidequest::Server::Database();
+    Sidequest::Server::ConnectionHandler server("localhost", 4000);
+
+    server.register_options_handler([](const httplib::Request& req, httplib::Response& res) {
+        std::cout << "OPTIONS request for " << req.path << std::endl;
+    res.set_header("Access-Control-Allow-Origin", "http://localhost:3001");
+    res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.set_header("Access-Control-Allow-Headers", "Content-Type");
+    res.status = 200;
+    });
 
 
 
-    using namespace Sidequest::Server;
-    auto database = new Database();
+    auto* user_create_handler = new Sidequest::Server::UserCreateCommand(database);
+    auto* user_delete_handler = new Sidequest::Server::UserDeleteCommand(database);
+    auto* user_read_handler = new Sidequest::Server::UserReadCommand(database);
+    auto* user_update_handler = new Sidequest::Server::UserUpdateCommand(database);
 
-    database->clean_init();
-
-
-    auto user1 = new ServerUser(database, "crud_user1_create@hs-aalen.de", "Temporary User1", "1");
-    user1->create_on_database();
-    auto user2 = new ServerUser(database, "crud_user2_create@hs-aalen.de", "Temporary User2", "2");
-    user2->create_on_database();
-    auto user3 = new ServerUser(database, "crud_user3_create@hs-aalen.de", "Temporary User3", "3");
-    user3->create_on_database();
-    auto user4 = new ServerUser(database, "crud_user4_create@hs-aalen.de", "Temporary User4", "4");
-    user4->create_on_database();
-
-    using namespace Sidequest::Server;
-    Query all_users = Query(database, "SELECT * FROM user u WHERE u.password > 2 ");
-    all_users.execute();
-    for (auto it = all_users.begin(); it != all_users.end(); ++it) {
-
-        auto row = *it;
-        std::cout << row["email"] << ", " << row["display_name"] << ", " << row["password"] << std::endl;
-    }
+    auto* quest_create_handler = new Sidequest::Server::QuestCreateCommand(database);
+    auto* quest_delete_handler = new Sidequest::Server::QuestDeleteCommand(database);
+    auto* quest_read_handler = new Sidequest::Server::QuestReadCommand(database);
+    auto* quest_update_handler = new Sidequest::Server::QuestUpdateCommand(database);
+    auto* quest_by_parent_handler = new Sidequest::Server::QuestUpdateCommand(database);
+    auto* quest_by_owner_handler = new Sidequest::Server::QuestUpdateCommand(database);
 
 
+
+    server.register_get_command(user_read_handler);
+    server.register_get_command(quest_read_handler);
+    server.register_get_command(quest_by_parent_handler);
+    server.register_get_command(quest_by_owner_handler);
+
+    server.register_post_command(user_create_handler);
+    server.register_post_command(quest_create_handler);
+
+    server.register_delete_command(user_delete_handler);
+    server.register_delete_command(quest_delete_handler);
+
+    server.register_put_command(user_update_handler);
+    server.register_put_command(quest_update_handler);
+
+    std::cout << "Starting server ..." << std::endl;
+
+    server.listen();
     return 0;
 }

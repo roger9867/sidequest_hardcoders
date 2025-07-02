@@ -15,21 +15,6 @@ namespace Sidequest::Server {
         return (*columnmap)[column_name];
     }
 
-    /*
-    ColumnMap* Query::get_column_mapping() {
-        auto column_indices = new std::unordered_map<std::string, int>();
-        int columnCount = sqlite3_column_count(prepared_statement);
-        for (int i = 0; i < columnCount; ++i) {
-            const char* name = sqlite3_column_name(prepared_statement, i);
-            if (name) {
-                (*column_indices)[std::string(name)] = i;
-            }
-        }
-        return column_indices;
-    }
-    */
-
-
     PreparedStatement* Query::get_prepared_statement() const {
         return prepared_statement;
     }
@@ -41,8 +26,7 @@ namespace Sidequest::Server {
         return result;
     }
 
-    std::string Query::read_text_value(std::string column_name)
-    {
+    std::string Query::read_text_value(std::string column_name) {
         if (!columnmap || columnmap->find(column_name) == columnmap->end())
             throw std::runtime_error("Column name not found: " + column_name);
 
@@ -50,18 +34,16 @@ namespace Sidequest::Server {
         const unsigned char* text = sqlite3_column_text(prepared_statement, index);
 
         if (text == nullptr)
-            return "";  // oder optional: throw std::runtime_error(...)
+            return "";
 
         return reinterpret_cast<const char*>(text);
     }
 
-    std::string Query::get_sql() const
-    {
+    std::string Query::get_sql() const {
         return STATEMENT_SQL;
     }
 
-    int Query::execute()
-    {
+    int Query::execute() {
         int code = -1;
         if (!((code = sqlite3_step(prepared_statement)) == SQLITE_DONE || code == SQLITE_ROW))
             reset_statement();
@@ -85,21 +67,14 @@ namespace Sidequest::Server {
 
     Query::Query(Database* database, std::string statement_sql)
         : database(database)
-        , STATEMENT_SQL(statement_sql)
-    {
+        , STATEMENT_SQL(statement_sql) {
         prepared_statement = database->get_prepared_statement(*this);
         if (prepared_statement == nullptr) {
             prepared_statement = database->add_prepared_statement(*this);
         }
-        // reset and unbind in case
         reset_statement();
     }
 
-
-
-
-
-    // String, Wert oder Null auf die Parameter binden
     void Query::bind(int parameter_index, std::string value) {
         int error_code = sqlite3_bind_text(prepared_statement, parameter_index, value.c_str(), -1, SQLITE_TRANSIENT);
         if (error_code != SQLITE_OK) {
@@ -116,29 +91,12 @@ namespace Sidequest::Server {
         sqlite3_bind_null(prepared_statement, index);
     }
 
-
-
-
-
-
-
-
-
-
     Query::~Query() {
         if (prepared_statement) {
             // Reset ressource and unlock it
             database->release_prepared_statement(prepared_statement);
         }
     }
-
-
-
-
-
-
-
-
 
     bool Query::QueryIterator::operator!=(const Query::QueryIterator& other) const {
         return is_end != other.is_end;
@@ -161,10 +119,8 @@ namespace Sidequest::Server {
         }
     }
 
-    Query::QueryIterator& Query::QueryIterator::operator++()
-    {
-        if (!is_end)
-        {
+    Query::QueryIterator& Query::QueryIterator::operator++() {
+        if (!is_end) {
             int code = sqlite3_step(query->prepared_statement);
             if (code != SQLITE_ROW) {
                 is_end = true;
@@ -173,8 +129,7 @@ namespace Sidequest::Server {
         return *this;
     }
 
-    std::unordered_map<std::string, std::string> Query::QueryIterator::operator*() const
-    {
+    std::unordered_map<std::string, std::string> Query::QueryIterator::operator*() const {
         if (is_end) throw std::out_of_range("Dereferencing end iterator");
 
         std::unordered_map<std::string, std::string> row;
@@ -186,13 +141,11 @@ namespace Sidequest::Server {
         return row;
     }
 
-    Query::QueryIterator Query::begin()
-    {
+    Query::QueryIterator Query::begin() {
         return QueryIterator(this);
     }
 
-    Query::QueryIterator Query::end()
-    {
+    Query::QueryIterator Query::end() {
         return QueryIterator(this, true);
     }
 

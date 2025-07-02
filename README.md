@@ -1,5 +1,12 @@
 # sidequest
-Unsere Gruppenlösung der Software Sidequest.
+Lösung der Software Sidequest.
 
-Make von application_root aus ausführen.
-Make run_server startet den Server zu Testzwecken.
+In application_root:
+	"cmake .."
+	"make"
+	"make test" führt die Unit Tests aus.
+	"./server" startet den Server.
+	
+Client:
+	im Order sidequest_client:
+		"npm run dev" Client ist dann im Browser erreichbar.

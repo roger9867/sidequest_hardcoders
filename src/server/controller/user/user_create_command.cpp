@@ -15,27 +15,31 @@ namespace Sidequest::Server {
     : database(database) {}
 
     void UserCreateCommand::execute(const httplib::Request& request, httplib::Response& response) {
+
+        set_cors_headers(response);
+
         std::cout << "calling UserCreateCommand" << std::endl;
         std::cout << request.body << std::endl;
         auto json = Json::parse(request.body);
         std::cout << json << std::endl;
-        auto user = new ServerUser(database, 0);
+        auto user = new ServerUser(database, "");
         user->from_json(json);
 
         try {
             user->create_on_database();
         }
         catch (UnableToCreateObjectException& e) {
-            response.set_content(Json("unable to create user"), "text/plain");
+            response.set_content(Json("Unable to create user.").dump(), "application/json");
             response.status = httplib::StatusCode::BadRequest_400;
-            std::cout << "unable to create user" << std::endl;
+            std::cout << "Unable to create user." << std::endl;
             return;
         }
 
-        response.set_content(Json({"id", user->get_id() }).dump(), "text/plain");
+        response.set_content(Json({{"id", user->get_id()}}).dump(), "application/json");
         response.status = httplib::StatusCode::OK_200;
-        std::cout << "user created successfully" << std::endl;
+        std::cout << "User created successfully." << std::endl;
     }
+
 
     std::string UserCreateCommand::endpoint() {
         return "/api/user/create";

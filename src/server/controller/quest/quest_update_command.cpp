@@ -15,6 +15,9 @@ namespace Sidequest::Server {
     : database(database) {}
 
     void QuestUpdateCommand::execute(const httplib::Request& request, httplib::Response& response) {
+
+        set_cors_headers(response);
+
         std::cout << "calling QuestUpdateCommand" << std::endl;
         std::cout << request.body << std::endl;
         auto json = Json::parse(request.body);

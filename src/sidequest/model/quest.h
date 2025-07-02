@@ -64,8 +64,6 @@ namespace Sidequest {
 		void set_title(std::string title);
 		void set_editor(User* editor);
 
-
-		//Status string_to_status(const std::string& status_str);
 		std::string status_to_string(Status status);
 		Status string_to_status(const std::string& s);
 

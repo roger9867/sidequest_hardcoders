@@ -21,14 +21,13 @@ namespace Sidequest {
     SerializableUser::~SerializableUser() {}
 
     Json SerializableUser::to_json(SerializationMode mode, int depth) {
-        // nur 1 Objekt falls nicht all_levels
-        if (mode != all_levels)
+
+        if (mode == no_level)
             return Json(email);
 
         Json json = {
             { "email", email },
             { "display_name", display_name }
-            //{ "email", email }
         };
 
         return json;
@@ -40,7 +39,7 @@ namespace Sidequest {
         } else if (json.contains("id") && !json.at("id").is_null()) {
             json.at("id").get_to(email);
         } else {
-            email = ""; // oder throw std::runtime_error("missing email or id");
+            email = "";
         }
 
         if (json.contains("display_name") && !json.at("display_name").is_null()) {

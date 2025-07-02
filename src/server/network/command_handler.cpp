@@ -5,7 +5,7 @@
 #include <iostream>
 #include <json.hpp>
 
-#include "connection_handler.h"
+#include "network_handler.h"
 #include "httplib.h"
 #include "command_handler.h"
 
@@ -14,9 +14,15 @@ using json = nlohmann::json;
 namespace Sidequest::Server {
 
     std::function<void(const httplib::Request&, httplib::Response&)> CommandHandler::get_function() {
-        // Neue Parameter auf Funktion binden u. somit neue erstellen
         auto function = std::bind(&CommandHandler::execute, this, std::placeholders::_1, std::placeholders::_2);
         return function;
     }
+
+    void CommandHandler::set_cors_headers(httplib::Response& res, const std::string& origin ) {
+        res.set_header("Access-Control-Allow-Origin", origin);
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
+
 
 }  // namespace Sidequest::Server

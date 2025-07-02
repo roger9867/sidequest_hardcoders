@@ -21,7 +21,6 @@ namespace Sidequest {
         SerializableUser(Id email, std::string display_name, std::string password);
         virtual ~SerializableUser();
 
-        // implementation of JsonSerialisable
         virtual Json to_json(SerializationMode mode = no_level, int depth = 0) override;
         virtual void from_json(const Json& json) override;
     };

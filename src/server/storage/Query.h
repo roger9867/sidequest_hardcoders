@@ -24,7 +24,7 @@ namespace Sidequest::Server {
         class QueryIterator {
         public:
             explicit QueryIterator(Query* query, bool is_end = false);
-            QueryIterator& operator++();           // Prefix increment
+            QueryIterator& operator++();
             bool operator!=(const QueryIterator& other) const;
             std::unordered_map<std::string, std::string> operator*() const;
         private:
@@ -42,12 +42,7 @@ namespace Sidequest::Server {
         ColumnMap* columnmap = nullptr;
 
         int get_column_index(std::string column_name);
-
-        //ColumnMap* get_columnmap();
-        //ColumnMap* get_column_mapping();
-
         void prepare();
-
         bool is_executed = 0;
 
     public:
@@ -64,7 +59,6 @@ namespace Sidequest::Server {
         int execute();
         PreparedStatement* get_prepared_statement() const;
         std::string get_sql() const;
-        //Columnget_column_map() const;
         void reset_statement();
     };
 }

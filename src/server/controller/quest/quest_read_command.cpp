@@ -16,16 +16,18 @@ namespace Sidequest::Server {
         : database(database) {}
 
     void QuestReadCommand::execute(const httplib::Request& request, httplib::Response& response) {
-        std::cout << "calling UserReadCommand" << std::endl;
+
+        set_cors_headers(response);
+
+        std::cout << "Calling QuestReadCommand." << std::endl;
         Id user_id = request.path_params.at("id");
-        //Id user_id = std::stoul( request.path_params.at("id") );
         auto user = new ServerQuest(database, user_id);
 
         try {
             user->read_on_database();
         }
         catch (UnableToReadObjectException& e) {
-            response.set_content(Json("no such user"), "text/plain");
+            response.set_content(Json("No such quest."), "text/plain");
             response.status = httplib::StatusCode::NotFound_404;
             return;
         }
@@ -36,7 +38,7 @@ namespace Sidequest::Server {
     }
 
     std::string QuestReadCommand::endpoint() {
-        return "/api/user/:id/read";
+        return "/api/quest/:id/read";
     }
 
 }  // namespace Sidequest::Server

@@ -39,7 +39,12 @@ add_library(sidequest_lib STATIC ${LIBRARY_SOURCES} )
 # ===============================
 find_directories(SERVER_SOURCE_DIRS "src/server" "${FILE_TYPES}")
 generate_source_tree(SERVER_SOURCES "${SERVER_SOURCE_DIRS}" "${FILE_TYPES}")
-add_library(server_lib ${SERVER_SOURCES} )
+add_library(server_lib ${SERVER_SOURCES}
+		src/server/controller/quest/quest_by_parent.h
+		src/server/controller/quest/quest_by_parent.cpp
+		src/server/controller/quest/quest_by_owner.h
+		src/server/controller/quest/quest_by_owner.cpp)
+
 
 add_dependencies(server_lib sidequest_lib)
 
@@ -52,15 +57,7 @@ add_executable(server src/server/main.cpp)
 target_link_libraries(server_lib sidequest_lib)
 # server depends on server_lib and sqlite3
 target_link_libraries(server server_lib sqlite3)
-# Redundant
-#target_link_libraries(server sidequest_lib)
-#target_link_libraries(server server_lib)
-#target_link_libraries(server sqlite3)
 
-
-#target_link_libraries(server sidequest_lib)
-#target_link_libraries(server server_lib)
-#target_link_libraries(server sqlite3)
 
 # set the application working directory
 include_directories(${SIDEQUEST_SERVER_INCLUDE_DIR})

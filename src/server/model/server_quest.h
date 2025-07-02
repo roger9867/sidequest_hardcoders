@@ -34,9 +34,6 @@ namespace Sidequest::Server {
             Quest* parent,
             std::vector<Quest*> subquests);
 
-
-        //ServerQuest(Database * database, const std::string & string);
-
         ~ServerQuest();
 
         void load_sub_quests();
@@ -48,7 +45,6 @@ namespace Sidequest::Server {
 
         std::string class_id() override;
 
-        //void load_parent();
     };
 }
 

@@ -75,6 +75,39 @@ namespace Sidequest::Server {
 	}
 
 
+
+	void ServerUser::load_quests_by_owner() {
+		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? ORDER BY id;");
+		query.reset_statement();
+		query.bind(1, email);
+
+		this->main_quests = std::vector<Quest*>();
+
+		int status = query.execute();
+		if (status != SQLITE_DONE && status != SQLITE_ROW)
+			throw UnableToReadObjectException("Loading main quests failed");
+
+		if (status == SQLITE_ROW) {
+			for (auto it = query.begin(); it != query.end(); ++it) {
+				auto row = *it;
+				ServerQuest* quest = new ServerQuest(
+					database,
+					row["id"],
+					Quest::initial,
+					row["title"],
+					row["caption"],
+					this,
+					new ServerUser(database, row["editor_id"]),
+					nullptr,
+					std::vector<Quest*>());
+				quest->set_status(
+					quest->string_to_status(row["status"]));
+				this->main_quests.push_back(quest);
+			}
+		}
+		query.reset_statement();
+	}
+
 	void ServerUser::load_main_quests() {
 		auto query = Query(database, "SELECT * FROM quest WHERE owner_id = ? AND parent_id IS NULL ORDER BY id;");
 		query.reset_statement();
@@ -89,7 +122,6 @@ namespace Sidequest::Server {
 		if (status == SQLITE_ROW) {
 			for (auto it = query.begin(); it != query.end(); ++it) {
 				auto row = *it;
-				//this->main_quests.push_back(
 					ServerQuest* quest = new ServerQuest(
 						database,
 						row["id"],

@@ -34,24 +34,18 @@ namespace Sidequest::Server {
 
     ServerQuest::~ServerQuest() = default;
 
-    void ServerQuest::create_on_database()
-    {
+    void ServerQuest::create_on_database() {
         auto server_user_owner = new ServerUser(database, owner->get_email(), owner->get_display_name(), owner->get_password());
-        // save owner if not in database only
         try {
             server_user_owner->create_on_database();
         }
-        catch (UnableToCreateObjectException ignored)
-        {
-        }
-        // save editor if not in database only
+        catch (UnableToCreateObjectException ignored) {}
+
         auto server_user_editor = new ServerUser(database, editor->get_email(), editor->get_display_name(), editor->get_password());
         try {
             server_user_editor->create_on_database();
         }
-        catch (UnableToCreateObjectException ignored)
-        {
-        }
+        catch (UnableToCreateObjectException ignored) {}
 
 
         Query query = Query(database,"INSERT INTO quest (id, status, title, caption, owner_id, editor_id, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?);");
@@ -95,7 +89,6 @@ namespace Sidequest::Server {
         if (query.execute() != SQLITE_ROW)
             throw UnableToReadObjectException("id");
 
-        // Status is int or string??
         status = string_to_status(query.read_text_value("status"));
         title = query.read_text_value("title");
         caption = query.read_text_value("caption");
@@ -118,7 +111,6 @@ namespace Sidequest::Server {
     }
 
 
-    // update subquests?? --> nicht in sql tabelle
     void ServerQuest::update_on_database() {
         Query query = Query(database,"UPDATE quest SET status = ?, title = ?, caption = ?, owner_id = ?, editor_id = ?,  parent_id = ? WHERE id = ?;");
         query.reset_statement();
@@ -141,7 +133,6 @@ namespace Sidequest::Server {
         query.reset_statement();
     }
 
-    // passt
     void ServerQuest::delete_on_database() {
         Query query = Query(database,"DELETE FROM quest WHERE id=?;");
         query.reset_statement();
@@ -150,7 +141,6 @@ namespace Sidequest::Server {
             throw UnableToDeleteObjectException("id");
         query.reset_statement();
     }
-
 
     void ServerQuest::load_sub_quests() {
         auto query = Query(database, "SELECT * FROM quest WHERE parent_id=?;");
@@ -217,6 +207,15 @@ namespace Sidequest::Server {
         }
     }
     */
+
+
+    /*
+    std::vector<ServerQuest> get_quests_by_parent(Id quest_id) {
+
+        auto parent_quest = new ServerQuest(database,quest_id);
+
+    }*/
+
 
     std::string ServerQuest::class_id() {
         return "quest";

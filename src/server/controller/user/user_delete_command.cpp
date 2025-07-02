@@ -15,16 +15,15 @@ namespace Sidequest::Server {
     : database(database) {}
 
     void UserDeleteCommand::execute(const httplib::Request& request, httplib::Response& response) {
-        std::cout << "calling UserReadCommand" << std::endl;
+        std::cout << "Calling UserDeleteCommand." << std::endl;
         Id user_id = request.path_params.at("id");
-        //Id user_id = std::stoul(request.path_params.at("id"));
         auto user = new ServerUser(database, user_id);
 
         try {
             user->delete_on_database();
         }
         catch (UnableToCreateObjectException& e) {
-            response.set_content(Json("unable to delete user"), "text/plain");
+            response.set_content(Json("Unable to delete user."), "text/plain");
             response.status = httplib::StatusCode::BadRequest_400;
             std::cout << "unable to delete user" << std::endl;
             return;
@@ -32,7 +31,7 @@ namespace Sidequest::Server {
 
         response.set_content("", "text/plain");
         response.status = httplib::StatusCode::OK_200;
-        std::cout << "user deletes successfully" << std::endl;
+        std::cout << "User deleted successfully." << std::endl;
     }
 
     std::string UserDeleteCommand::endpoint() {

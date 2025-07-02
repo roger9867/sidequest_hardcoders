@@ -27,9 +27,6 @@ namespace Sidequest {
 
     SerializableQuest::~SerializableQuest() {}
 
-
-
-
     Json SerializableQuest::to_json(SerializationMode mode, int depth) {
     if (mode == no_level)
         return Json::object({ {"id", id} });
@@ -41,7 +38,6 @@ namespace Sidequest {
         { "caption", caption }
     };
 
-    // Owner
     if (owner != nullptr) {
         if (mode == one_level && depth > 0) {
             json["owner"] = Json::object({ { "email", owner->get_email() } });
@@ -57,7 +53,6 @@ namespace Sidequest {
         json["owner"] = nullptr;
     }
 
-    // Editor
     if (editor != nullptr) {
         if (mode == one_level && depth > 0) {
             json["editor"] = Json::object({ { "email", editor->get_email() } });
@@ -73,7 +68,6 @@ namespace Sidequest {
         json["editor"] = nullptr;
     }
 
-    // Parent
     if (parent != nullptr) {
         if (mode == one_level && depth > 0) {
             json["parent"] = Json::object({ { "id", parent->get_id() } });
@@ -89,7 +83,6 @@ namespace Sidequest {
         json["parent"] = nullptr;
     }
 
-    // Subquests
     json["subquests"] = Json::array();
     for (auto subquest : subquests) {
         if (!subquest)
@@ -102,14 +95,6 @@ namespace Sidequest {
 
     return json;
 }
-
-
-
-
-
-
-
-
 
 
     void SerializableQuest::from_json(const Json& json) {
@@ -128,7 +113,6 @@ namespace Sidequest {
         status = Quest::string_to_status(status_str);
     }
 
-    // Parent
     parent = nullptr;
     std::optional<Id> parent_id;
     if (json.contains("parent") && !json.at("parent").is_null()) {
@@ -138,7 +122,6 @@ namespace Sidequest {
         parent = deserialize_loadable_pointer<SerializableQuest>(parent_json, parent_id);
     }
 
-    // Owner
     owner = nullptr;
     std::optional<Id> owner_id;
     if (json.contains("owner") && !json.at("owner").is_null()) {
@@ -148,7 +131,6 @@ namespace Sidequest {
         owner = deserialize_loadable_pointer<SerializableUser>(owner_json, owner_id);
     }
 
-    // Editor
     editor = nullptr;
     std::optional<Id> editor_id;
     if (json.contains("editor") && !json.at("editor").is_null()) {
@@ -158,7 +140,6 @@ namespace Sidequest {
         editor = deserialize_loadable_pointer<SerializableUser>(editor_json, editor_id);
     }
 
-    // Subquests
     subquests.clear();
     if (json.contains("subquests") && json.at("subquests").is_array()) {
         for (const auto& subquest_json : json.at("subquests")) {

@@ -16,10 +16,11 @@ namespace Sidequest::Server {
     : database(database) {}
 
     void QuestDeleteCommand::execute(const httplib::Request& request, httplib::Response& response) {
+
+        set_cors_headers(response);
+
         std::cout << "calling UserReadCommand" << std::endl;
         Id user_id = request.path_params.at("id");
-        // Id ist schon string
-        //Id user_id = std::stoul(request.path_params.at("id"));
         auto user = new ServerQuest(database, user_id);
 
         try {

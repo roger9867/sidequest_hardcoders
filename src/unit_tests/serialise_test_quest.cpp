@@ -65,10 +65,6 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_PARENT) {
 	quest->set_parent(parent_quest);
 
 
-	//quest->serialize_parent_recursive = true;
-
-	// falsch, id sollte bei no levels oder one_level stehen stehen aber nicht bei all_levels
-	//quest->parent_recursive_mode = JsonSerializable::all_levels;
 	std::cout <<  "before null error" << std::endl;
 
 	nlohmann::json json_string = quest->to_json(JsonSerializable::one_level);
@@ -96,17 +92,13 @@ TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_PARENT) {
 }
 
 TEST_F(SerialiseTestsQuest, SERIALIZE_QUEST_OWNER_EDITOR) {
-	auto quest = new SerializableQuest("id1", Quest::Status::done, "Unit Test Quest", "caption\ncan be several lines\nor not.", nullptr, nullptr, nullptr);
+	auto quest = new SerializableQuest("id1", Quest::Status::done, "Unit Test Quest", "Caption\ncan be several lines\nor not.", nullptr, nullptr, nullptr);
 
 	auto owner = new SerializableUser("unitest1@hs-aalen.de", "Unit Test User 1", "secret");
 	quest->set_owner(owner);
 
 	auto editor = new SerializableUser("unitest2@hs-aalen.de", "Unit Test User 2", "secret");
 	quest->set_editor(editor);
-	//quest->editor->get_email() = quest->editor->id;
-
-	//quest->serialize_owner_recursive = true;
-	//quest->serialize_editor_recursive = true;
 
 	auto new_quest = serialize_then_deserialize(quest, JsonSerializable::all_levels);
 	delete(quest);

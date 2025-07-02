@@ -35,11 +35,10 @@ namespace Sidequest {
 
 		void add_main_quests(Quest* quest);
 
-		// Recursive case: more than one Quest*
 		template<typename... Quests>
 		void add_main_quests(Quest* first, Quests... rest) {
 			main_quests.push_back(first);
-			add_main_quests(rest...);  // recursive call
+			add_main_quests(rest...);
 		}
 	};
 

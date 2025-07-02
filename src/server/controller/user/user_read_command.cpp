@@ -15,23 +15,23 @@ namespace Sidequest::Server {
             : database(database) {}
 
         void UserReadCommand::execute(const httplib::Request& request, httplib::Response& response) {
-            std::cout << "calling UserReadCommand" << std::endl;
+            std::cout << "Calling UserReadCommand." << std::endl;
             Id user_id = request.path_params.at("id");
-            //Id user_id = std::stoul( request.path_params.at("id") );
             auto user = new ServerUser(database, user_id);
 
             try {
                 user->read_on_database();
             }
             catch (UnableToReadObjectException& e) {
-                response.set_content(Json("no such user"), "text/plain");
+                response.set_content(Json("No such user."), "text/plain");
                 response.status = httplib::StatusCode::NotFound_404;
                 return;
             }
 
-            std::string user_as_json = user->to_json().dump();
+            std::string user_as_json = user->to_json(JsonSerializable::one_level).dump();
             response.set_content(user_as_json, "text/plain");
             response.status = httplib::StatusCode::OK_200;
+            std::cout << "User read correctly." << std::endl;
         }
 
         std::string UserReadCommand::endpoint() {

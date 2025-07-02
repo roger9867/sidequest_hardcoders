@@ -14,13 +14,6 @@ namespace Sidequest::Server {
 
         ColumnCache::~ColumnCache() {}
 
-        /*
-        int ColumnCache::get_column_index(PreparedStatement* statement, std::string column_name) {
-            auto columns_of_table = get_columns_of_statement(statement);
-            return (*columns_of_table)[column_name];
-        }
-        */
-
         ColumnCache::ColumnMap* ColumnCache::get_columns_of_statement(PreparedStatement* statement) {
             auto entry = columns_by_statement.find(statement);
             if (entry == columns_by_statement.end())

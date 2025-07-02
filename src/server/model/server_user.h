@@ -4,15 +4,19 @@
 #include <string>
 #include <vector>
 
+#include "../storage/Query.h"
 #include <model/user.h>
 #include <storage/persistable.h>
 
 #include "network/serializable_user.h"
 
+
+
 namespace Sidequest::Server {
 
 	class ServerUser : public virtual Sidequest::User, public Persistable, public SerializableUser {
 	 public:
+
 
 		explicit ServerUser(Database* database);
 		ServerUser(Database* database, std::string email);
@@ -27,6 +31,7 @@ namespace Sidequest::Server {
 		std::string class_id() override;
 
 		void load_main_quests();
+		void load_quests_by_owner();
 
 	};
 }

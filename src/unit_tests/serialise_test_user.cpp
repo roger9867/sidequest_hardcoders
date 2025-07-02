@@ -18,13 +18,12 @@ protected:
 
     SerializableUser* createSerializeDeserializeUser(Id email, std::string display_name, std::string password) {
         auto user = new SerializableUser("unitest@hs-aalen.de", "Unit Test User", "secret");
-        auto json = user->to_json();
+        auto json = user->to_json(JsonSerializable::one_level);
         std::cout << "Input JSON: " << json.dump(4) << std::endl;
 
         delete(user);
 
         std::string json_string = json.dump(4);
-        //std::cout << json_string << std::endl;
 
         auto user2 = new SerializableUser("unitest@hs-aalen.de");
 
@@ -37,8 +36,7 @@ protected:
 TEST_F(SerialiseTestsUser, SERIALIZE_USER) {
     auto user = createSerializeDeserializeUser("unitest@hs-aalen.de", "Unit Test User", "1234" );
 
-    std::cout << user->get_id() << std::endl;
-    ASSERT_EQ(user->get_id(), "unitest@hs-aalen.de");
+    ASSERT_EQ(user->get_email(), "unitest@hs-aalen.de");
     ASSERT_EQ(user->get_display_name(), "Unit Test User");
 
     delete(user);

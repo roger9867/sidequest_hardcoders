@@ -364,13 +364,6 @@ auto sub_subquests33 = std::vector<Sidequest::Quest*> {
 
 	// user->create_on_database(); // owner is persisted without doing it explicitly!
 	for (auto main_quest : user->get_main_quests()) {
-		/*
-		auto subquests1 = std::vector<Sidequest::Quest*> {
-			new ServerQuest(database, "id1.1", Sidequest::Quest::initial, "title1.1", "caption1.1", user, editor, user->get_main_quests()[0], {}),
-			new ServerQuest(database, "id1.2", Sidequest::Quest::initial, "title1.2", "caption1.2", user, editor, user->get_main_quests()[0], {}),
-			new ServerQuest(database, "id1.3", Sidequest::Quest::initial, "title1.3", "caption1.3", user, editor, user->get_main_quests()[0], {})
-		};
-		*/
 
 		auto server_quest = ServerQuest(
 			database,

@@ -18,8 +18,10 @@ namespace Sidequest::Server {
         virtual void execute(const Request& request, Response& response) = 0;
         virtual std::string endpoint() = 0;
 
-        // execute umbauen, um spezifische Funktion zu erhalten
         std::function<void(const Request&, Response&)> get_function();
+
+        void set_cors_headers(httplib::Response& res, const std::string& origin = "http://localhost:3001");
+
     };
 
 }  // Namespace Sidequest::Server
